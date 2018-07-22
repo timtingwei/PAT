@@ -1,5 +1,8 @@
 // copyright [2018] <mituh>
 // 1003. 我要通过! (20).cpp
+/*
+  思路: 统计输入各个字符出现的次数, 有且只有PAT, 且PT出现的次数为1, pi < ti, a*b = c;
+ */
 #include <stdio.h>
 #include <string.h>
 
