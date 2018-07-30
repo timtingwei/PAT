@@ -1,8 +1,8 @@
 // Copyright [2018] <mituh>
-// 1018. 锤子剪刀布 (20).cpp    // 4:03  (30)  4:57 -> 54min 出篓子了..
+// 1018. 锤子剪刀布 (20).cpp    // 4:03  (30)
 /*
   现给出两人的交锋记录，请统计双方的胜、平、负次数，并且给出双方分别出什么手势的胜算最大。
-  思路: 用数组储存胜, 平, 负次数, struct定义两个人各自的成绩, 谁胜了修改变量, 对最大次数手势判断
+  思路: 只记录甲的胜负, 计算出乙胜负平; 六种排列组合; 三个计数器放在数组中, 用 ?:判断哪个位置计数最高
 
 输出第1、2行分别给出甲、乙的胜、平、负次数，数字间以1个空格分隔。第3行给出两个字母，分别代表甲、乙获胜次数最多的手势，中间有1个空格。如果解不唯一，则输出按字母序最小的解。
 
@@ -25,70 +25,44 @@ J J
 2 3 5
 B B
 */
-#include <cstdio>
-#include <cstring>
 #include <iostream>
-#include <vector>
-#include <algorithm>
+#include <cstdio>
 using namespace std;
 
-struct score {
-  int w = 0, f = 0, e = 0;    // 胜负平
-  int C = 0, J = 0, B = 0;    // 胜的时候出的手势
-};
-
-vector<int> x;
-// const char motion[4] = "CJB";
-const char motion[4] = "BCJ";
-char getMax(int a, int b, int c) {
-  // a,b,c谁最大, 返回0,1,2; 并列返回字典序列
-  x.clear();
-  int m;
-  m = max(a, b); m = max(m, c);
-// printf("%d %d %d m=%d\n", a, b, c, m);
-  if (m == a) x.push_back(0);
-  if (m == b) x.push_back(1);
-  if (m == c) x.push_back(2);
-  sort(x.begin(), x.end());
-// printf("x0=%d\n", x[0]);
-  return motion[x[0]];
-}
-
-
-char a[2], b[2];
+const char str[4] = {'B', 'C', 'J'};
 
 int main () {
   int T;
-  score jia, yi;
-  if (scanf("%d", &T) == 1 && T) {
-    while (T--) {
-      // char a, b;
-      scanf("%s %s", a, b);
-// printf("%s %s\n", a, b);
-// /*
-      if (a[0] == 'J') {
-        if (b[0] == 'J') { jia.e++; yi.e++; }    // 平局
-        else if (b[0] == 'C') { jia.f++; yi.w++; yi.C++; }  // 乙胜
-        else if (b[0] == 'B') { jia.w++; yi.f++; jia.J++; }  // jia胜
-      } else if (a[0] == 'C') {
-        if (b[0] == 'C') { jia.e++; yi.e++; }    // 平局
-        else if (b[0] == 'J') { jia.w++; yi.f++; jia.C++; }  // jia胜
-        else if (b[0] == 'B') { yi.w++; jia.f++; yi.B++; }  // yi胜
-      } else if (a[0] == 'B') {
-        if (b[0] == 'B') { jia.e++; yi.e++; }    // 平局
-        else if (b[0] == 'J') { jia.f++; yi.w++; yi.J++; }  // yi胜
-        else if (b[0] == 'C') { yi.f++; jia.w++; jia.B++; }  // jia胜
-      }
-// */
+  int win = 0, fail = 0;   // 只记录甲的胜负
+  int winjia[3] = {0}, winyi[3] = {0};
+  cin >> T;
+  int ct = T;
+  while (T--) {
+    char a, b;
+    cin >> a >> b;
+    // 六种排列组合
+    if (a == 'B' && b == 'C') {
+      win++; winjia[0]++;
+    } else if (a == 'B' && b == 'J') {
+      fail++; winyi[2]++;
+    } else if (a == 'C' && b == 'B') {
+      fail++; winyi[0]++;
+    } else if (a == 'C' && b == 'J') {
+      win++; winjia[1]++;
+    } else if (a == 'J' && b == 'B') {
+      win++; winjia[2]++;
+    } else if (a == 'J' && b == 'C') {
+      fail++; winyi[1]++;
     }
-    printf("%d %d %d\n", jia.w, jia.e, jia.f);
-    printf("%d %d %d\n", yi.w, yi.e, yi.f);
-    printf("%c", getMax(jia.B, jia.C, jia.J));
-    printf(" %c\n", getMax(yi.B, yi.C, yi.J));
   }
-
-
+  printf("%d %d %d\n", win, ct-win-fail, fail);
+  printf("%d %d %d\n", fail, ct-win-fail, win);
+  int jiamax = (winjia[0] >= winjia[1]) ? 0 : 1;
+  jiamax = (winjia[jiamax] >= winjia[2]) ? jiamax : 2;
+  int yimax = (winyi[0] >= winyi[1]) ? 0 : 1;
+  yimax = (winyi[yimax] >= winyi[2]) ? yimax : 2;
+  printf("%c", str[jiamax]);
+  printf(" %c\n", str[yimax]);
 
   return 0;
 }
-
