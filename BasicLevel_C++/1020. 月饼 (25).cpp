@@ -40,21 +40,13 @@ struct Cake {
   double num, tot;
   double each_d;
 };
-
-
 struct cmp {
   bool operator () (const Cake c1, const Cake c2) const {
     return c1.each_d <= c2.each_d;     // 每吨的价格越高权重越高
   }
 };
-
-
 vector<Cake> cakes;
-
 priority_queue<Cake, vector<Cake>, cmp > dq;
-
-
-vector<int> each_d;
 
 int main() {
   int N, D;   // 种类数和市场需求
@@ -67,18 +59,14 @@ int main() {
   for (int i = 0; i < N; i++) {
     cin >> cakes[i].tot;
     cakes[i].each_d = cakes[i].tot / cakes[i].num;
-// cout << cakes[i].each_d << "\n";
     dq.push(cakes[i]);
   }
-// cout << (dq.top()).each_d << "\n";
   double ans = 0;
   int now_d = 0;
   for (;;) {
     // debug case3: 如果都供应完了, 还没达到市场需求的情况
     if (dq.empty()) break;
     Cake cmax = dq.top();
-// if (now_d >= D) break;   // 此时供货已经满足需求
-// cout << "now_d=" << now_d << " D = " << D << "cmax.each_d=" << cmax.num << "\n";
     if (D - now_d >= cmax.num) {   // 如果需求量比当前最有优价格的供货量大
       now_d += cmax.num;
       ans += cmax.each_d * cmax.num;
@@ -87,19 +75,11 @@ int main() {
       now_d = D;    // 供应部分后, 满足市场需求
       break;
     }
-    
     dq.pop();   // 队首月饼供应完毕
   }
   printf("%.2lf\n", ans);
   return 0;
 }
-
-// cat ~/timspace/aoa*/Be*/boo*/ch5/eg5-7.cpp
-
-
-
-
-
 
 
 
