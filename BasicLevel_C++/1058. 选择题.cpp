@@ -189,6 +189,7 @@ int main() {
 // printf("j = %d\n", j);
       if (s[j] == '(') {            // 判断某一题答案是否匹配
         int n = s[j+1] - '0';       // debug3: 字符转数字
+        printf("n = %d\n", n);
         if (n != v[qi]->right_n) {  // debug4: 题号写成i
           wrong[qi]++;
         } else {
@@ -197,11 +198,13 @@ int main() {
           int ok = 1;
           for (int x = 0; x < sub.length(); x++) {
             if (sub[x] == ' ') continue;
+            cout << sub[x] << " " << v[qi]->right_s[opi] << endl;
             if (sub[x] != v[qi]->right_s[opi++]) { ok = 0; break;}
           }
           if (ok) {
             sum += v[qi]->score;      // 如果正确总分就要加
           } else {
+            cout << "qi= " << qi << "wrong[qi] = " wrong[qi]+1 << endl;
             wrong[qi]++;              // 错误统计
           }
         }
