@@ -385,6 +385,8 @@ No 2
 注意点:
 case 1, 2WA: 怎么解决某个珠子需要两课以上问题, 也就是说要把取过的字符给删除?
 
+<span style="color:red">另外, Hash散列的思想, 主要体现在, 一个address对应一个key, 现在要判断的是珠子这个key是否存在, 用find函数完成了判断, 但我认为还是只用了Hash散列的策略，这里没有去设计是否均匀, 解决冲突等问题, find函数的复杂度也应该不是O(1), 但这个策略还是抓住了问题的本质.</span>
+
 ```cpp
 #include <iostream>
 #include <string>
@@ -409,4 +411,32 @@ int main() {
 
   return 0;
 }
+```
+
+补充常用的两种字符串删除,
+
+一般要对取字符串进行删除, 无非是删除子串和删除字符(删除子串的特殊情况),
+
+1, 索引+长度删除, 删子串(也可以删长度为1的子串)
+```cpp
+string s, t;
+
+// erase(int pos, int length);    // 用索引+子串长度删除
+s = "1aabcd";
+t = "aa";
+int pos = s.find(t);
+s.erase(pos, t.length());         // s.erase(pos, 2);
+
+cout << s << endl;                // 1bcd
+```
+
+2, 迭代器删除, 删字符
+```cpp
+
+  // erase(iterator it)             // 用迭代器删除
+  s = "1aabcd";
+  t = "b";
+  pos = s.find(t);
+  s.erase(s.begin() + pos);
+  cout << s << endl;                // 1aacd
 ```
