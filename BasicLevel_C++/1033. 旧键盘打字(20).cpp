@@ -56,7 +56,7 @@ abcd
 
 */
 
-
+/*
 #include <iostream>
 #include <cstdio>
 #include <cstring>
@@ -92,5 +92,21 @@ int main() {
     if (ok) cout << input[i];
   }
   cout << "\n";
+  return 0;
+}
+*/
+
+#include <iostream>
+#include <string>
+using namespace std;
+int main() {
+  string bad, should;
+  getline(cin, bad);
+  getline(cin, should);
+  for (int i = 0; i < should.length(); i++) {
+    if (bad.find(toupper(should[i])) != string::npos) continue;
+    if (isupper(should[i]) && bad.find('+') != string::npos) continue;
+    cout << should[i];
+  }
   return 0;
 }
