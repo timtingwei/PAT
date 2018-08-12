@@ -236,3 +236,114 @@ int main() {
   return 0;
 }
 ```
+
+### 1033 旧键盘打字(20)（20 point(s)）
+
+旧键盘上坏了几个键，于是在敲一段文字的时候，对应的字符就不会出现。现在给出应该输入的一段文字、以及坏掉的那些键，打出的结果文字会是怎样？
+
+#### 输入格式：
+
+输入在2行中分别给出坏掉的那些键、以及应该输入的文字。
+其中对应英文字母的坏键以大写给出；
+每段文字是不超过10^5^个字符的串。
+可用的字符包括字母[a-z, A-Z]、数字0-9、以及下划线“_”（代表空格）、“,”、“.”、“-”、“+”（代表上档键）。
+题目保证第2行输入的文字串非空。
+
+注意：如果上档键坏掉了，那么大写的英文字母无法被打出。
+
+#### 输出格式：
+
+在一行中输出能够被打出的结果文字。如果没有一个字符能被打出，则输出空行。
+
+#### 输入样例：
+
+7+IE.
+7_This_is_a_test.
+#### 输出样例：
+
+_hs_s_a_tst
+
+#### Solution:
+
+
+我学习了哈希散列之后, 在网上又看到这样的解法:
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+int main() {
+  string bad, should;
+  getline(cin, bad);
+  getline(cin, should);
+  for (int i = 0; i < should.length(); i++) {
+    if (bad.find(toupper(should[i])) != string::npos) continue;
+    if (isupper(should[i]) && bad.find('+') != string::npos) continue;
+    cout << should[i];
+  }
+  return 0;
+}
+```
+
+分析可得
+1, 把操作都放在一个string中进行, 没有额外的vector, 减少了很多代码。
+
+2, string对象, 可以调用find()函数, 如果找到了这个字符, 就返回这个字符的索引, 如果没找到, 返回一个与string::npos相等的值 cout << string::npos << endl;   // 18446744073709551615
+
+3, toupper和isupper的使用, 注意的是, toupper对非字母的字符也能起到作用, 因此可以将对整个字符串进行遍历
+
+4, Hash散列, 通过查找HashTable中的key值, 判断key是否在列表中, 这里抽象出来, 就是判断某个字符ch, 或者是toupper(ch), 用find()函数判断是不是在这个字符串中, 在的给出相应的操作。
+
+5, 这道题对不符合条件的进行忽略continue, 不符合的有两种:一种是转换成upper之后能在坏键字符串中找到的, 一种是, 另一种是大写, 但坏键中有"+"上档位键 
+
+### 1038 统计同成绩学生(20)（20 point(s)）
+
+本题要求读入N名学生的成绩，将获得某一给定分数的学生人数输出。
+
+#### 输入格式：
+
+输入在第1行给出不超过10^5^的正整数N，即学生总人数。随后1行给出N名学生的百分制整数成绩，中间以空格分隔。最后1行给出要查询的分数个数K（不超过N的正整数），随后是K个分数，中间以空格分隔。
+
+#### 输出格式：
+
+在一行中按查询顺序给出得分等于指定分数的学生人数，中间以空格分隔，但行末不得有多余空格。
+
+#### 输入样例：
+
+10
+60 75 90 55 75 99 82 90 75 50
+3 75 90 88
+
+#### 输出样例：
+3 2 0
+
+#### Solution:
+
+注意点:
+1, 使用memset, 需要include <cstring>头文件; 如果用vector构造全为0的数组的话, vector v(101);
+2, 0-100分有101个数, 如果写100的话, case3通不过
+3, 这题需要用scanf读, 用cin就case3超时, case的数据量有点大的
+case3:
+
+```cpp
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+  int a[101];
+  memset(a, 0, sizeof(a));
+  int N, K, tmp;
+  scanf("%d", &N);
+  while (N--) {
+    scanf("%d", &tmp);
+    a[tmp]++;
+  }
+  scanf("%d", &K);
+  for (int i =0; i < K; i++) {
+    if (i) cout << " ";
+    scanf("%d", &tmp);
+    printf("%d", a[tmp]);
+  }
+  return 0;
+}
+```
