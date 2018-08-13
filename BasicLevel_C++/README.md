@@ -440,3 +440,140 @@ cout << s << endl;                // 1bcd
   s.erase(s.begin() + pos);
   cout << s << endl;                // 1aacd
 ```
+
+### 1042 字符统计（20）（20 point(s)）
+
+请编写程序，找出一段给定文字中出现最频繁的那个英文字母。
+
+#### 输入格式：
+
+输入在一行中给出一个长度不超过 1000 的字符串。字符串由 ASCII 码表中任意可见字符及空格组成，至少包含 1 个英文字母，以回车结束（回车不算在内）。
+
+#### 输出格式：
+
+在一行中输出出现频率最高的那个英文字母及其出现次数，其间以空格分隔。如果有并列，则输出按字母序最小的那个字母。统计时不区分大小写，输出小写字母。
+
+#### 输入样例：
+
+This is a simple TEST.  There ARE numbers and other symbols 1&2&3...........
+#### 输出样例：
+
+e 7
+
+#### Solution:
+
+
+```cpp
+// Copyright [2018] <mituh>
+// 1042. 字符统计(20).cpp  5:50 -> 06:08
+/*
+#include <iostream>
+#include <string>
+#include <cstring>
+using namespace std;
+int cnt[200];   // 假设ascii200wei
+int main() {
+  memset(cnt, 0, sizeof(cnt));
+  string s;
+  getline(cin, s);
+  int max_p = 0;
+  for (int i = 0; i < s.length(); i++) {
+    if (isalpha(s[i])) {
+      int ch = tolower(s[i]);
+      cnt[ch]++;
+      if (cnt[ch] > cnt[max_p]) max_p = ch;
+    }
+  }
+  printf("%c %d\n", max_p, cnt[max_p]);
+
+  return 0;
+}
+*/
+
+// This is a simple TEST.  There ARE numbers and other symbols 1&2&3...........
+
+// case 2, 如果有并列, 输出字典序列小的
+
+
+#include <iostream>
+#include <string>
+#include <cstring>
+using namespace std;
+int cnt[200];   // 假设ascii200位
+int main() {
+  memset(cnt, 0, sizeof(cnt));
+  string s;
+  getline(cin, s);
+  int max_p = 0;
+  for (int i = 0; i < s.length(); i++) {
+    if (isalpha(s[i])) {
+      int ch = tolower(s[i]);
+      cnt[ch]++;
+      if (cnt[ch] > cnt[max_p]) max_p = ch;
+      if (cnt[ch] == cnt[max_p] && (ch < max_p)) max_p = ch;
+    }
+  }
+  printf("%c %d\n", max_p, cnt[max_p]);
+
+  return 0;
+}
+```
+
+
+### 1043 输出PATest（20 point(s)）
+
+给定一个长度不超过 10^4的、仅由英文字母构成的字符串。请将字符重新调整顺序，按 PATestPATest.... 这样的顺序输出，并忽略其它字符。当然，六种字符的个数不一定是一样多的，若某种字符已经输出完，则余下的字符仍按 PATest 的顺序打印，直到所有字符都被输出。
+
+#### 输入格式：
+输入在一行中给出一个长度不超过 10^4​的、仅由英文字母构成的非空字符串。
+
+#### 输出格式：
+在一行中按题目要求输出排序后的字符串。题目保证输出非空。
+
+#### 输入样例：
+redlesPayBestPATTopTeePHPereatitAPPT
+
+#### 输出样例：
+PATestPATestPTetPTePePee
+
+
+#### Solution:
+
+```cpp
+// 06:12 -> 6:30
+
+#include <iostream>
+#include <string>
+#include <cstring>
+using namespace std;
+
+char chars[6] = {'P', 'A', 'T', 'e', 's', 't'};
+
+int main() {
+  int cnt[6];
+  memset(cnt, 0, sizeof(cnt));
+  string s; cin >> s;
+  for (int i = 0; i < s.length(); i++) {
+    if (s[i] == 'P') cnt[0]++;
+    else if (s[i] == 'A') cnt[1]++;
+    else if (s[i] == 'T') cnt[2]++;
+    else if (s[i] == 'e') cnt[3]++;
+    else if (s[i] == 's') cnt[4]++;
+    else if (s[i] == 't') cnt[5]++;
+  }
+  
+  int ok;
+  do {
+    ok = 0;
+    for (int i = 0; i < 6; i++) {
+      if (cnt[i]) {
+        ok = 1;
+        printf("%c", chars[i]);
+        cnt[i]--;
+      }
+    }
+  } while (ok);
+  
+  return 0;
+}
+```
