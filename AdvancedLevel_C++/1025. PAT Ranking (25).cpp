@@ -105,3 +105,63 @@ int main() {
 
   return 0;
 }
+
+/*
+去掉string, vector, cout, cin, 用下标管理数组..
+
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+
+struct Testee {
+  char id[15];
+  int score;
+  int final_rank;
+  int local_number;
+  int local_rank;
+} stu[100050];
+
+bool cmp(Testee t1, Testee t2) {
+  if (t1.score != t2.score) {
+    return t1.score > t2.score;
+  } else {
+    return strcmp(t1.id, t2.id) < 0;
+  }
+}
+
+int main() {
+  int N, K, num = 0;
+  scanf("%d", &N);
+  for (int in = 0; in < N; in++) {
+    scanf("%d", &K);
+    for (int i = 0; i < K; i++) {
+      scanf("%s %d", stu[num].id, &stu[num].score);
+      stu[num].local_number = in+1;
+      num++;
+    }
+    sort(stu+num-K, stu+num, cmp);
+    int r = 1;
+    stu[num-K].local_rank = 1;
+    for (int i = num-K+1; i < num; i++) {
+      if (stu[i].score == stu[i-1].score) {
+        stu[i].local_rank = stu[i-1].local_rank;
+      } else {
+        stu[i].local_rank = i + 1 - (num-K);
+      }
+    }
+  }
+  sort(stu, stu+num, cmp);
+
+  printf("%d\n", num);
+  int r = 1;
+  for (int i = 0; i < num; i++) {
+    if (i > 0 && stu[i].score != stu[i-1].score) {
+      r = i+1;
+    }
+    printf("%s %d %d %d\n", stu[i].id, r,
+           stu[i].local_number, stu[i].local_rank);
+  }
+  return 0;
+}
+*/
