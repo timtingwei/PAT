@@ -1,7 +1,5 @@
 // Copyright [2018] <mituh>
-// 06:12 -> 6:30
-
-// 1043. 输出PATest(20).cpp
+// 1043. 输出PATest(20).cpp  06:12 -> 6:30
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -14,12 +12,8 @@ int main() {
   memset(cnt, 0, sizeof(cnt));
   string s; cin >> s;
   for (int i = 0; i < s.length(); i++) {
-    if (s[i] == 'P') cnt[0]++;
-    else if (s[i] == 'A') cnt[1]++;
-    else if (s[i] == 'T') cnt[2]++;
-    else if (s[i] == 'e') cnt[3]++;
-    else if (s[i] == 's') cnt[4]++;
-    else if (s[i] == 't') cnt[5]++;
+    for (int j = 0; j < 6; j++)
+      if (s[i] == chars[j]) { cnt[j]++; break; }
   }
 
   int ok;
