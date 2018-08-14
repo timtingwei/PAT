@@ -462,39 +462,18 @@ e 7
 
 #### Solution:
 
+将字符的ascii码作为address,  address = key, a[adrr] = cnt(key);
+用max_p记录出现次数最多字符的ascii码, 打印时, 可以直接转换和索引.
+
+坑点, case 2, 如果有并列, 输出字典序小的, 判断两个位置最大值是否相等, 且当前i对应字母更小;
+
+另外我测试了ascii码的分布情况, 所以, 散列表大小开到150左右就ok了
+```
+'a' = 97, 'z' = 122, 'A' = 65, 'Z' = 90
+'0' = 48, '9' = 57
+```
 
 ```cpp
-// Copyright [2018] <mituh>
-// 1042. 字符统计(20).cpp  5:50 -> 06:08
-/*
-#include <iostream>
-#include <string>
-#include <cstring>
-using namespace std;
-int cnt[200];   // 假设ascii200wei
-int main() {
-  memset(cnt, 0, sizeof(cnt));
-  string s;
-  getline(cin, s);
-  int max_p = 0;
-  for (int i = 0; i < s.length(); i++) {
-    if (isalpha(s[i])) {
-      int ch = tolower(s[i]);
-      cnt[ch]++;
-      if (cnt[ch] > cnt[max_p]) max_p = ch;
-    }
-  }
-  printf("%c %d\n", max_p, cnt[max_p]);
-
-  return 0;
-}
-*/
-
-// This is a simple TEST.  There ARE numbers and other symbols 1&2&3...........
-
-// case 2, 如果有并列, 输出字典序列小的
-
-
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -520,6 +499,8 @@ int main() {
 ```
 
 
+
+
 ### 1043 输出PATest（20 point(s)）
 
 给定一个长度不超过 10^4的、仅由英文字母构成的字符串。请将字符重新调整顺序，按 PATestPATest.... 这样的顺序输出，并忽略其它字符。当然，六种字符的个数不一定是一样多的，若某种字符已经输出完，则余下的字符仍按 PATest 的顺序打印，直到所有字符都被输出。
@@ -539,9 +520,9 @@ PATestPATestPTetPTePePee
 
 #### Solution:
 
-```cpp
-// 06:12 -> 6:30
+Hash散列将字符key转化成对应索引, 每出现一次cnt+1, 让散列表中的字符按照顺序循环打印, 每次打印都减少次数, 直到次数为空
 
+```cpp
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -554,12 +535,16 @@ int main() {
   memset(cnt, 0, sizeof(cnt));
   string s; cin >> s;
   for (int i = 0; i < s.length(); i++) {
+    for (int j = 0; j < 6; j++)
+      if (s[i] == chars[j]) { cnt[j]++; break; }
+    /*
     if (s[i] == 'P') cnt[0]++;
     else if (s[i] == 'A') cnt[1]++;
     else if (s[i] == 'T') cnt[2]++;
     else if (s[i] == 'e') cnt[3]++;
     else if (s[i] == 's') cnt[4]++;
     else if (s[i] == 't') cnt[5]++;
+    */
   }
   
   int ok;
@@ -574,6 +559,143 @@ int main() {
     }
   } while (ok);
   
+  return 0;
+}
+```
+
+
+### 1047 编程团体赛（20 point(s)）
+
+编程团体赛的规则为：每个参赛队由若干队员组成；所有队员独立比赛；参赛队的成绩为所有队员的成绩和；成绩最高的队获胜。
+
+现给定所有队员的比赛成绩，请你编写程序找出冠军队。
+
+#### 输入格式：
+
+输入第一行给出一个正整数 N（≤10^4），即所有参赛队员总数。随后 N 行，每行给出一位队员的成绩，格式为：队伍编号-队员编号 成绩，其中队伍编号为 1 到 1000 的正整数，队员编号为 1 到 10 的正整数，成绩为 0 到 100 的整数。
+
+#### 输出格式：
+
+在一行中输出冠军队的编号和总成绩，其间以一个空格分隔。注意：题目保证冠军队是唯一的。
+
+#### 输入样例：
+6
+3-10 99
+11-5 87
+102-1 0
+102-3 100
+11-9 89
+3-2 61
+
+#### 输出样例：
+11 176
+
+#### Solution:
+
+team作为address地址, f(key) = key; 对字符串根据分隔符求子串
+
+```cpp
+#include <iostream>
+#include <cstring>
+#include <string>
+using namespace std;
+
+int scores[1000];
+
+int main() {
+  int N; string s;
+  cin >> N;
+  memset(scores, 0, sizeof(scores));
+  getchar();
+  int max = 0;
+  while (N--) {
+    getline(cin, s);
+    string team = s.substr(0, s.find("-"));
+    string score = s.substr(s.find(" ")+1, s.length());
+    int i_team = stoi(team);
+    scores[i_team] += stoi(score);
+    if (scores[i_team] > scores[max]) max = i_team;
+  }
+  cout << max << " " << scores[max] << endl;
+  return 0;
+}
+```
+
+
+### 1083 是否存在相等的差（20 point(s)）
+
+给定 N 张卡片，正面分别写上 1、2、……、N，然后全部翻面，洗牌，在背面分别写上 1、2、……、N。将每张牌的正反两面数字相减（大减小），得到 N 个非负差值，其中是否存在相等的差？
+
+#### 输入格式：
+
+输入第一行给出一个正整数 N（2 ≤ N ≤ 10 000），随后一行给出 1 到 N 的一个洗牌后的排列，第 i 个数表示正面写了 i 的那张卡片背面的数字。
+
+#### 输出格式：
+
+按照“差值 重复次数”的格式从大到小输出重复的差值及其重复的次数，每行输出一个结果。
+
+#### 输入样例：
+
+8
+3 5 8 6 2 1 4 7
+
+#### 输出样例：
+
+5 2
+3 3
+2 2
+
+#### Solution:
+
+差值作为散列地址, f(key) = key, 在不同差值地址上计数, 对重复的差值进行排序
+
+坑点:
+> * 1, 牌从1开始计数, 1 2 3 4 5 ..
+> * 2, 要对差值进行排序, 这里用了vector, 写cmp函数的方法, 不知道还有没有其他.
+
+
+```cpp
+#include <iostream>
+#include <cstring>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+#define MAXN 10000
+typedef struct {
+  int delta;
+  int cnt;
+} Node;
+
+int cnt[MAXN];
+vector<Node> ans;
+
+int cmp(Node n1, Node n2) {
+  return  n1.delta > n2.delta;
+}
+
+int main() {
+  int N, v;
+  cin >> N;
+  memset(cnt, 0, sizeof(cnt));
+  for (int i = 0; i < N; i++) {
+    cin >> v;
+    int d = (i < v) ? v-(i+1) : (i+1)-v;
+    cnt[d]++;
+  }
+
+  for (int i = 0; i < MAXN; i++) {
+    if (cnt[i] > 1) {
+      Node node;
+      node.delta = i; node.cnt = cnt[i];
+      ans.push_back(node);
+    }
+  }
+
+  sort(ans.begin(), ans.end(), cmp);
+  for (int i = 0; i < ans.size(); i++) {
+    cout << ans[i].delta << " " << ans[i].cnt << endl;
+  }
   return 0;
 }
 ```
