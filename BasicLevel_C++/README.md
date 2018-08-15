@@ -810,3 +810,98 @@ int main() {
 
 ```
 
+### 1030 完美数列(25)（25 point(s)）
+给定一个正整数数列，和正整数p，设这个数列中的最大值是M，最小值是m，如果M <= m * p，则称这个数列是完美数列。
+
+现在给定参数p和一些正整数，请你从中选择尽可能多的数构成一个完美数列。
+
+#### 输入格式：
+输入第一行给出两个正整数N和p，其中N（<= 10^5^）是输入的正整数的个数，p（<= 10^9^）是给定的参数。第二行给出N个正整数，每个数不超过10^9^。
+
+#### 输出格式：
+在一行中输出最多可以选择多少个数可以用它们组成一个完美数列。
+
+#### 输入样例：
+10 8
+2 3 20 4 5 1 6 7 8 9
+
+#### 输出样例：
+8
+
+#### Solution:
+
+思路1: (只有case4超时的思路):
+指针i从左往右移动, 指针j从右往左移动, 当j所指向的数M, if (a[j] > a[i] * p) j--; 算出此时j-i+1就是数列大小, 保留最大的那个值; 更进一步加快这个算法的话, i移动过程中, 剩余的长度比max小的给跳过
+思路2:
+指针i从左往右移动, j从i+max开始(只找比当前长度还大的数列), 移动到满足 M <= m*p的极值或最右, 也许要更新max的值. 
+
+<span style="color:red">思路2的j指针的移动, 是根据max动态变化的, 不用在内层循环中, 再去判断 M <= m*p这层关系来确定是不是要继续深入i.</span>
+
+坑点: 
+当心整数乘法溢出, 因为p<=10^9, 整数的范围在-2 * 10^9~ 2 * 10^9之间, 因此用long long, 可达9 * 10 ^ 18
+
+
+```cpp
+#include <cstdio>
+#include <algorithm>
+const int MAXN = 100050;
+long long a[MAXN];
+int main() {
+  int N, p;
+  scanf("%d %d", &N, &p);
+  for (int i = 0; i < N; i++) scanf("%lld", &a[i]);
+  std::sort(a, a+N);
+
+  int max = 0;
+  for (int i = 0; i < N; i++) {
+    int j = i+max;
+    for ( ; j < N && a[j] <= a[i]*p; j++) { }
+    int tmp = j-i;
+    if (tmp > max) max = tmp;
+  }
+  printf("%d\n", max);
+  return 0;
+}
+```
+
+另外附上, 根据我自己的思路改进的两个版本:
+```cpp
+#include <cstdio>
+#include <algorithm>
+const int MAXN = 100050;
+long long a[MAXN];
+int main() {
+  int N, p;
+  scanf("%d %d", &N, &p);
+  for (int i = 0; i < N; i++) scanf("%lld", &a[i]);
+  std::sort(a, a+N);
+  
+  int i = 0, j, max = 0;
+  while (i < N) {
+    j = N-1;
+    while (a[i]*p < a[j] && i <= j) j--;
+    int cnt = j-i+1;
+    if (cnt > max) max = cnt;
+    i++;
+  }
+  printf("%d\n", max);
+
+  return 0;
+}
+```
+
+```cpp
+{
+  ...
+  int i = 0, j, max = 0;
+  while (i < N && (max < N-i)) {
+    j = N-1;
+    while (a[i]*p < a[j] && i <= j) j--;
+    int cnt = j-i+1;
+    if (cnt > max) max = cnt;
+    i++;
+  }
+  printf("%d\n", max);
+  ...
+}
+```
