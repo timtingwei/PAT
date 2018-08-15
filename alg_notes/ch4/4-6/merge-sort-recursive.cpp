@@ -1,4 +1,7 @@
 // Copyright [2018] <mituh>
+// merge-sort-recursive.cpp
+// 归并排序递归版本
+
 #include <stdio.h>
 
 const int MAXN = 100;
