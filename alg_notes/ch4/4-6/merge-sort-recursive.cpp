@@ -32,6 +32,7 @@ int main() {
   // int left = 0, right = 9;
   int A[] = {3, 1, 2, 9, 7};
   int left = 0, right = 5;
+
   for (int i = 0; i < right; i++) printf("%d ", A[i]);
   printf("\n");
   mergeSort(A, left, right-1);
