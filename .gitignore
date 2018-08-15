@@ -41,3 +41,6 @@ test.cpp
 # temp file
 *.cpp~
 *.*~
+
+# gdb file
+*.out.*
