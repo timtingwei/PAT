@@ -1,7 +1,6 @@
 // Copyright [2018] <mituh>
-// 1035 插入与归并(25).cpp 3:14 3:38 3:57  未完成, 仍旧不太理解归并排序
+// 1035 插入与归并(25).cpp 3:14 3:38 3:57  吃完早饭再看, 完成
 /*
-aa
 1035 插入与归并（25 point(s)）
 
 根据维基百科的定义：
@@ -43,6 +42,16 @@ Merge Sort
 // 判断完是MergeSort后, 需要重新模拟归并, 并且多进行一次迭代, 这里我不是很懂
 
 */
+
+/*
+// 判断出merge后, 直接根据i计算出step进行下一次归并, case 4, 6 WA
+Input Case:
+10
+1 2 3 4 7 5 9 4 0 6
+1 2 3 4 5 7 4 9 0 6
+
+// i=4, step = i * 2 = 8, 这样计算就出了问题
+
 #include <cstdio>
 #include <algorithm>
 using namespace std;
@@ -91,38 +100,157 @@ int main() {
 
   return 0;
 }
-
-
-
-/*
-10
-3 1 2 8 7 5 9 4 6 0
-1 2 3 4 5 6 7 8 9 0
-Insertion Sort
-0 1 2 3 4 5 6 7 8 9
 */
 
 /*
+// 没限制step, 以及刚开始比较顺序时, 忽略相等的两个元素有序, 导致case 4 Segmentation Fault
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+void show(int S[], int N) {
+  for (int k = 0; k < N; k++) {
+    if (k) printf(" ");
+    printf("%d", S[k]);
+  }
+  printf("\n");
+}
+
+const int MAXN = 105;
+int S[MAXN];
+int T[MAXN];
+int main() {
+  int N;
+  scanf("%d", &N);
+  for (int i = 0; i < N; i++)  scanf("%d", &S[i]);
+  for (int i = 0; i < N; i++)  scanf("%d", &T[i]);
+
+  int i, j;
+  for (i = 1; i < N && T[i-1] < T[i]; i++) { }
+  for (j = i; j < N && S[j] == T[j]; j++) { }
+  printf("j = %d\n", j);
+  if (j == N) {
+    printf("Insertion Sort\n");
+    sort(S, S+i+1);
+  } else {
+    printf("Merge Sort\n");
+    int flag = 1, step = 2;
+    while (flag) {
+      flag = 0;
+      show(S, N);
+      for (int k = 0; k < N; k++) if (S[k] != T[k]) { flag = 1; break;}
+
+      for (int i = 0; i < N; i += step) {
+        printf("i = %d, step = %d\n", i, step);
+        sort(S+i, S + min(i+step, N));
+      }
+      step *= 2;
+    }
+  }
+
+  for (int k = 0; k < N; k++) {
+    if (k) printf(" ");
+    printf("%d", S[k]);
+  }
+  printf("\n");
+
+  return 0;
+}
+*/
+
+// case4: Segmentation Fault
+/*
 10
 3 1 2 8 7 5 9 4 0 6
 3 1 2 8 7 5 9 4 0 6
-Insertion Sort
-1 3 2 8 7 5 9 4 0 6
 */
 
 
 /*
-10
-3 1 2 8 7 5 9 4 0 6
-1 2 3 8 4 5 7 9 0 6
-Merge Sort
-1 2 3 4 5 7 8 9 0 6
+// 虽然修改了step的对循环的控制权, 但错误并不是在这里
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+const int MAXN = 105;
+int S[MAXN];
+int T[MAXN];
+int main() {
+  int N;
+  scanf("%d", &N);
+  for (int i = 0; i < N; i++)  scanf("%d", &S[i]);
+  for (int i = 0; i < N; i++)  scanf("%d", &T[i]);
+
+  int i, j;
+  for (i = 1; i < N && T[i-1] < T[i]; i++) { }
+  for (j = i; j < N && S[j] == T[j]; j++) { }
+  if (j == N) {
+    printf("Insertion Sort\n");
+    sort(S, S+i+1);
+  } else {
+    printf("Merge Sort\n");
+    int flag = 1;
+    for (int step = 2; step/2 <= N && flag; step *= 2) {
+      flag = 0;
+      for (int k = 0; k < N; k++) if (S[k] != T[k]) { flag = 1; break;}
+
+      for (i = 0; i < N; i += step) {
+// printf("i = %d, step = %d, i+step = %d\n", i, step, i+step);
+        sort(S+i, S + min(i+step, N));
+      }
+    }
+  }
+
+  for (int k = 0; k < N; k++) {
+    if (k) printf(" ");
+    printf("%d", S[k]);
+  }
+  printf("\n");
+
+  return 0;
+}
+
+// case4: wrong answer...S的中间两个元素相等, 也算有序, 仅仅只是漏掉了一个等号..
 */
 
-/* 既可以是insertion, 又是mergeSort
-10
-3 1 2 8 7 5 9 4 0 6
-1 2 3 4 5 7 8 9 0 6
-*/
 
-// Float points Exception??
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+const int MAXN = 105;
+int S[MAXN];
+int T[MAXN];
+int main() {
+  int N;
+  scanf("%d", &N);
+  for (int i = 0; i < N; i++)  scanf("%d", &S[i]);
+  for (int i = 0; i < N; i++)  scanf("%d", &T[i]);
+
+  int i, j;
+  for (i = 1; i < N && T[i-1] <= T[i]; i++) { }    // case4
+  for (j = i; j < N && S[j] == T[j]; j++) { }
+  if (j == N) {
+    printf("Insertion Sort\n");
+    sort(S, S+i+1);
+  } else {
+    printf("Merge Sort\n");
+    int flag = 1;
+    for (int step = 2; step/2 <= N && flag; step *= 2) {  // case6
+      flag = 0;
+      for (int k = 0; k < N; k++) if (S[k] != T[k]) { flag = 1; break;}
+
+      for (i = 0; i < N; i += step) {
+        sort(S+i, S + min(i+step, N));
+      }
+    }
+  }
+
+  for (int k = 0; k < N; k++) {
+    if (k) printf(" ");
+    printf("%d", S[k]);
+  }
+  printf("\n");
+
+  return 0;
+}
