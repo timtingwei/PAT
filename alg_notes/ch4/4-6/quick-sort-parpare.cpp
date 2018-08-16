@@ -2,6 +2,7 @@
 
 #include <cstdio>
 
+/*
 void sort(int a[], int n) {
   int temp = a[0];
   int left = 0, right = n-1;
@@ -20,9 +21,23 @@ void sort(int a[], int n) {
     }
   }
 }
+*/
+
+int sort(int a[], int n) {
+  int temp = a[0];
+  int left = 0, right = n - 1;
+  while (left < right) {
+    while (left < right && temp < a[right]) right--;
+    a[left] = a[right];
+    while (left < right && a[left] <= temp ) left++;
+    a[right] = a[left];
+  }
+  a[left] = temp;
+  return left;
+}
 
 int main() {
-  int a[6] = {5, 3, 9, 6 , 4, 1};
+  int a[6] = {5, 3, 9, 6 , 1, 4};
   sort(a, 6);
   for (int i = 0; i < 6; i++) {
     printf("%d ", a[i]);
