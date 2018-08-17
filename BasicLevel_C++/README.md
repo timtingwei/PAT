@@ -1111,3 +1111,222 @@ int main() {
   return 0;
 }
 ```
+
+### 1076 Wifi密码（15 point(s)）
+
+下面是微博上流传的一张照片：“各位亲爱的同学们，鉴于大家有时需要使用 wifi，又怕耽误亲们的学习，现将 wifi 密码设置为下列数学题答案：A-1；B-2；C-3；D-4；请同学们自己作答，每两日一换。谢谢合作！！~”—— 老师们为了促进学生学习也是拼了…… 本题就要求你写程序把一系列题目的答案按照卷子上给出的对应关系翻译成 wifi 的密码。这里简单假设每道选择题都有 4 个选项，有且只有 1 个正确答案。
+
+wifi.jpg
+
+####  输入格式：
+输入第一行给出一个正整数 N（≤ 100），随后 N 行，每行按照 编号-答案 的格式给出一道题的 4 个选项，T 表示正确选项，F 表示错误选项。选项间用空格分隔。
+
+#### 输出格式：
+在一行中输出 wifi 密码。
+
+#### 输入样例：
+8
+A-T B-F C-F D-F
+C-T B-F A-F D-F
+A-F D-F C-F B-T
+B-T A-F C-F D-F
+B-F D-T A-F C-F
+A-T C-F B-F D-F
+D-T B-F C-F A-F
+C-T A-F B-F D-F
+
+#### 输出样例：
+13224143
+
+#### Solution:
+
+1, 将整行当作一个string来读
+2, 用scanf读单个选项
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+int main() {
+  int N; cin >> N;
+  getchar();
+  while (N--) {
+    string s;
+    getline(cin, s);
+    cout << s[s.find('T')-2]-'A' + 1;
+  }
+  cout << endl;
+  return 0;
+}
+```
+
+```cpp
+#include <cstdio>
+char s[4];
+int main() {
+  int N;
+  scanf("%d", &N);
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < 4; j++) {
+      scanf("%s", s);
+      if (s[2] == 'T') {
+        printf("%d", s[0] - 'A' + 1);
+      }
+    }
+  }
+  printf("\n");
+
+  return 0;
+}
+```
+
+
+### 1072 开学寄语（20 point(s)）
+
+下图是上海某校的新学期开学寄语：天将降大任于斯人也，必先删其微博，卸其 QQ，封其电脑，夺其手机，收其 ipad，断其 wifi，使其百无聊赖，然后，净面、理发、整衣，然后思过、读书、锻炼、明智、开悟、精进。而后必成大器也！
+
+jiyu.JPG
+
+本题要求你写个程序帮助这所学校的老师检查所有学生的物品，以助其成大器。
+
+#### 输入格式：
+输入第一行给出两个正整数 N（≤ 1000）和 M（≤ 6），分别是学生人数和需要被查缴的物品种类数。第二行给出 M 个需要被查缴的物品编号，其中编号为 4 位数字。随后 N 行，每行给出一位学生的姓名缩写（由 1-4 个大写英文字母组成）、个人物品数量 K（0 ≤ K ≤ 10）、以及 K 个物品的编号。
+
+#### 输出格式：
+顺次检查每个学生携带的物品，如果有需要被查缴的物品存在，则按以下格式输出该生的信息和其需要被查缴的物品的信息（注意行末不得有多余空格）：
+
+姓名缩写: 物品编号1 物品编号2 ……
+最后一行输出存在问题的学生的总人数和被查缴物品的总数。
+
+#### 输入样例：
+4 2
+2333 6666
+CYLL 3 1234 2345 3456
+U 4 9966 6666 8888 6666
+GG 2 2333 7777
+JJ 3 0012 6666 2333
+
+#### 输出样例：
+U: 6666 6666
+GG: 2333
+JJ: 6666 2333
+3 5
+
+#### Solution:
+
+物件编号作为key值, 建立成Hash散列,
+
+坑点: 编号是四个数字, 0000的情况
+case2:
+4 3
+2333 6666 0000
+CYLL 4 1234 2345 3456 0000
+U 4 9966 6666 8888 6666
+GG 3 2333 7777 0000
+JJ 3 0012 6666 2333
+
+
+```cpp
+#include <iostream>
+#include <string>
+#include <cstring>
+using namespace std;
+
+int id[10000];
+
+int main() {
+  int N, M; string tmp;
+  int stu_n = 0, obj_n = 0;
+  cin >> N >> M;
+  memset(id, 0, sizeof(id));
+  for (int i = 0; i < M; i++) {
+    cin >> tmp;
+    id[stoi(tmp)] = 1;
+  }
+  for (int i = 0; i < N; i++) {
+    int ok = 0, k = 0;
+    string name; int cnt;
+    cin >> name >> cnt;
+    for (int j = 0; j < cnt; j++) {
+      cin >> tmp;
+      if (id[stoi(tmp)]) {
+        if (!ok) { cout << name << ":"; ok = 1;}
+        cout << " " << tmp;
+        k++;
+      }
+    }
+
+    if (ok) {stu_n++; obj_n += k; cout << endl;}
+  }
+  cout << stu_n << " " << obj_n << endl;
+  return 0;
+}
+```
+
+
+
+### 1077 互评成绩计算（20 point(s)）
+
+
+在浙大的计算机专业课中，经常有互评分组报告这个环节。一个组上台介绍自己的工作，其他组在台下为其表现评分。最后这个组的互评成绩是这样计算的：所有其他组的评分中，去掉一个最高分和一个最低分，剩下的分数取平均分记为 G1老师给这个组的评分记为 G2。该组得分为 (G1+G2)/2，最后结果四舍五入后保留整数分。本题就要求你写个程序帮助老师计算每个组的互评成绩。
+
+#### 输入格式：
+输入第一行给出两个正整数 N（> 3）和 M，分别是分组数和满分，均不超过 100。随后 N 行，每行给出该组得到的 N 个分数（均保证为整型范围内的整数），其中第 1 个是老师给出的评分，后面 N−1 个是其他组给的评分。合法的输入应该是 [0,M] 区间内的整数，若不在合法区间内，则该分数须被忽略。题目保证老师的评分都是合法的，并且每个组至少会有 3 个来自同学的合法评分。
+
+#### 输出格式：
+为每个组输出其最终得分。每个得分占一行。
+
+#### 输入样例：
+6 50
+42 49 49 35 38 41
+36 51 50 28 -1 30
+40 36 41 33 47 49
+30 250 -25 27 45 31
+48 0 0 50 50 1234
+43 41 36 29 42 29
+
+#### 输出样例：
+42
+33
+41
+31
+37
+39
+
+#### Solution:
+
+读入一个学生分数, 不合法的continue, 合法的放入vector, 对vector排序后, 取[1, size-1)下标对应的值.
+
+坑点:
+1, 有N个组, 计算每组分数外层循环N次, 内层循环N-1次.
+2, 四舍五入用 floor(a + 0.5);
+3, 定义double类型时, 要给初始值(刚开始错了)
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+using namespace std;
+
+int main() {
+  int N, M;
+  cin >> N >> M;
+  for (int i = 0; i < N; i++) {
+    int aveg; double g1, g2, tmp;
+    cin >> g2;
+    vector<double> scores;
+    for (int j = 0; j < N-1; j++) {
+      cin >> tmp;
+      if (tmp < 0 || tmp > M) continue;
+      scores.push_back(tmp);
+    }
+    sort(scores.begin(), scores.end());
+    for (int j = 1; j < scores.size() - 1; j++) { g1 += scores[j];}
+    g1 = g1/(scores.size()-2);
+    aveg = floor((g1+g2)/2 + 0.5);
+    cout << aveg << endl;
+  }
+  return 0;
+}
+```
