@@ -34,23 +34,23 @@ case 1通不过
 清晰的思路: 计算得到总共多少秒, hh:总秒数/3600取整, mm:剩余秒数/60取整, ss:剩余秒数四舍五入
 */
 
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 #include <iostream>
 using namespace std;
 
 int main() {
   double c1, c2;
   scanf("%lf %lf", &c1, &c2);
-  double c = (c2-c1) / 100;
+  double delta = (c2 - c1) / 100;
 
-  int h, m, s;
-  h = c/3600;
-  c = c-h*3600;
-  m = c/60;
-  c = c-m*60;
-  s = floor(c+0.5);
-  printf("%02d:%02d:%02d\n", h, m, s);
+  int hh, mm, ss;
+  hh = delta / 3600;
+  delta -= hh * 3600;
+  mm = delta / 60;
+  delta -= mm * 60;
+  ss = floor(delta + 0.5);
+  printf("%02d:%02d:%02d\n", hh, mm, ss);
   return 0;
 }
 
