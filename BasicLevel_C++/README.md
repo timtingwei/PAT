@@ -1330,3 +1330,113 @@ int main() {
   return 0;
 }
 ```
+
+### 1045 快速排序（25 point(s)）
+
+著名的快速排序算法里有一个经典的划分过程：我们通常采用某种方法取一个元素作为主元，通过交换，把比主元小的元素放到它的左边，比主元大的元素放到它的右边。 给定划分后的 N 个互不相同的正整数的排列，请问有多少个元素可能是划分前选取的主元？
+
+例如给定 $N = 5$, 排列是1、3、2、4、5。则：
+
+1 的左边没有元素，右边的元素都比它大，所以它可能是主元；
+尽管 3 的左边元素都比它小，但其右边的 2 比它小，所以它不能是主元；
+尽管 2 的右边元素都比它大，但其左边的 3 比它大，所以它不能是主元；
+类似原因，4 和 5 都可能是主元。
+因此，有 3 个元素可能是主元。
+
+#### 输入格式：
+
+输入在第 1 行中给出一个正整数 N（≤10^5​​); 第 2 行是空格分隔的 N 个不同的正整数，每个数不超过 10^9​​。
+
+#### 输出格式：
+
+在第 1 行中输出有可能是主元的元素个数；在第 2 行中按递增顺序输出这些元素，其间以 1 个空格分隔，行首尾不得有多余空格。
+
+#### 输入样例：
+5
+1 3 2 4 5
+
+#### 输出样例：
+3
+1 4 5
+
+#### Solution:
+
+这道题不错, 原以为很简单, 不像是25分的题目, 就开始盲目做了。
+思路1: 用p扫描数组的同时, 用i = p-1; j =  p+1;分别向前和向后扫描, 结果5分钟写完, 1, 3超时,
+思路2: 观察数组排序后的特性, 主元是对应i的位置两个元素相等的元素. 但还有一个条件, 比如 1 1 1, 主元应该只有1; 再例如, 6 2 4 3 1, 排序后是 1 2 3 4 6, 2不是主元, 因此除了相等外, 还需要原数列该位置的数左边均小于这个数。
+
+
+
+坑点：
+1, 即使这样的思路下, 如果用遍历检查当前位置之前的元素 是否 均小于这个元素, 那么同样会超时, 因此只用一个max量来记录每次操作的元素是否是整个操作的最大值, 只通过max来确定条件2
+
+思路2, max代替条件2的正确代码
+```cpp
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+  int N, tmp;
+  scanf("%d", &N);
+  vector<int> v;
+  for (int i = 0; i < N; i++) {
+    scanf("%d", &tmp);
+    v.push_back(tmp);
+  }
+
+  vector<int> ans;
+  vector<int> tmp_v = v;
+  sort(v.begin(), v.end());
+  int max_i = 0;
+  for (int i = 0; i < N; i++) {
+    if (tmp_v[i] > tmp_v[max_i]) max_i = i;
+    if (tmp_v[i] == v[i] && max_i == i) ans.push_back(tmp_v[i]);
+  }
+
+  printf("%lu\n", ans.size());
+  for (int i = 0; i < ans.size(); i++) {
+    if (i) printf(" ");
+    printf("%d", ans[i]);
+  }
+  printf("\n");
+  return 0;
+}
+```
+
+另外附上思路1: 超时的代码
+```cpp
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+  int N, tmp;
+  scanf("%d", &N);
+  vector<int> v;
+  for (int i = 0; i < N; i++) {
+    scanf("%d", &tmp);
+    v.push_back(tmp);
+  }
+
+  vector<int> ans;
+  for (int p = 0; p < N; p++) {
+    int i = p-1, j = p+1;
+    while (i >= 0 && v[i] <= v[p]) i--;
+    while (j < N && v[j] > v[p]) j++;
+    if (i == -1 && j == N) {
+      ans.push_back(v[p]);
+    }
+  }
+  sort(ans.begin(), ans.end());
+  printf("%lu\n", ans.size());
+  for (int i = 0; i < ans.size(); i++) {
+    if (i) printf(" ");
+    printf("%d", ans[i]);
+  }
+  printf("\n");
+  return 0;
+}
+```
