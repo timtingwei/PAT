@@ -408,10 +408,8 @@ N 11 2 N 9
 思路正确无坑点， 一次通过, 用hash表记得include cstring.
 
 ```cpp
-#include <iostream>
 #include <cstring>
 #include <cstdio>
-using namespace std;
 
 int exist[6];
 int ans[6];
