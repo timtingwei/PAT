@@ -12,6 +12,57 @@ N 11 2 N 9
 2 6 6
 N 0 N N N
 */
+
+// 第二次做, 02:30 -> 2:43 -> 2:55 = 25;
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+using namespace std;
+
+int exist[6];
+int ans[6];
+double ans_3;
+
+int main() {
+  int N; scanf("%d", &N);
+  memset(exist, 0, sizeof(exist));
+  memset(ans, 0, sizeof(ans));
+  int cnt = 0, flag = 1;
+  for (int i = 0; i < N; i++) {
+    int tmp; scanf("%d", &tmp);
+    if (tmp % 5 == 0 && tmp % 2 == 0) {
+      ans[0] += tmp; exist[0] = 1;
+    }
+    if (tmp % 5 == 1) {
+      ans[1] += tmp * flag; exist[1] = 1;
+      flag *= -1;
+    }
+    if (tmp % 5 == 2) {
+      ans[2]++; exist[2] = 1;
+    }
+    if (tmp % 5 == 3) {
+      ans_3 += tmp; cnt++; exist[3] = 1;
+    }
+    if (tmp % 5 == 4 && tmp > ans[4]) {
+      ans[4] = tmp; exist[4] = 1;
+    }
+  }
+
+  for (int i = 0; i < 5; i++) {
+    if (i) printf(" ");
+    if (exist[i]) {
+      if (i != 3) printf("%d", ans[i]);
+      else printf("%.1f", ans_3 / cnt);
+    } else {
+      printf("N");
+    }
+  }
+  printf("\n");
+
+  return 0;
+}
+
+/*
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -71,3 +122,4 @@ int main() {
   }
   return 0;
 }
+*/
