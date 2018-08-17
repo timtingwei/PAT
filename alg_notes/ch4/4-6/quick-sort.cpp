@@ -17,7 +17,6 @@ int Partition(int A[], int left, int right) {
 
 void quickSort(int A[], int left, int right) {
   if (left < right) {                    // 需要判断, 否则会无限循环下去
-    printf("left = %d, right = %d\n", left, right);
     int pos = Partition(A, left, right);
     quickSort(A, left,  pos - 1);
     quickSort(A, pos+1, right);
