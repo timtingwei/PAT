@@ -85,3 +85,93 @@ int main() {
 广义two pointers是利用问题和数列的特性, 用两个下标i, j对序列进行扫描(可以同向,也可以反向), 以较低的复杂(一般是O(n), 合起来扫描一遍, 或者如合并一样O(n+m))解决问题。
 ### 4.6.2 归并排序
 ### 4.6.3 快速排序
+
+先实现一个two pointers确定排序, 并确定分割点的函数
+
+```cpp
+int Partition(int A[], int left, int right) {
+  int temp = A[left];
+  while (left < right) {
+    while (left < right && temp < A[right]) right--;
+    A[left] = A[right];
+    while (left < right && A[left] <= temp) left++;
+    A[right] = A[left];
+  }
+  A[left] = temp;
+  return left;
+}
+```
+
+然后写出快速排序的递归函数, 主要会忘记left < right的边界条件
+```cpp
+void quickSort(int A[], int left, int right) {
+  if (left < right) {
+    pos = Partition(A, left, right);
+    quickSort(A, left,  pos - 1);
+    quickSort(A, pos+1, right);
+  }
+}
+```
+
+
+快速排序算法当序列中元素的排列比较随机时, 效率最高, 但是当序列中元素接近有序时, 达到最坏的O(n^2)复杂度。
+主要原因是, 主元pos没有把当前的数列划分成两个长度接近的区间。
+即使能够使得两个长度接近, 最坏时间复杂度也是O(n^2), 但是可以通过`随机算法`达到期望的O(nlogn)的复杂度
+
+
+#### 生成随机数的朴素方法:
+
+```cpp
+#include <stdlib>
+#include <time>
+
+int main() {
+  srand((unsigned)time(NULL));
+  int a = 10, b = 90;
+  for (int i = 0; i < 10; i++) {
+    printf("%d ", rand() % (b-a+1) + a);      // 生成[a, b]范围的随机数
+  }
+  return 0;
+}
+```
+
+`rand() % (b-a+1) + a`这种方法针对于左右端点相差不超过RAND_MAX的区间的随机数
+
+
+#### 生成大范围的随机数的一种方法
+
+`(int)(round(1.0*rand()/RAND_MAX*(hi-lo) + lo))`
+
+#### 根据上面两种随机数的做法, 修改Partition函数
+
+根据之前的随机函数, 生成p是在left到right中随机的一个数, 也就是索引。
+交换p和left所指向的元素, 之后仍旧按照头元素分割数列。
+```cpp
+int Partition_random(int A[], int left, int right) {
+  int p = (int)round(1.0*rand()/RAND_MAX*(right-left) + left);
+  swap(A, left, p);
+  int temp = A[left];
+  while (left < right) {
+    while (left < right && temp < A[right]) right--;
+    A[left] = A[right];
+    while (left < right && A[left] <= temp) left++;
+    A[right] = A[left];
+  }
+  A[left] = temp;
+  return left;
+}
+```
+
+
+递归的版本又写错了, 这个递归中没有while, 如果递归中还有while的话.. 这个逻辑太嵌套了..
+```cpp
+void quickSort(int A[], int left, int right) {
+  // while (left < right) {
+  if (left < right) {
+    int pos = Partition_random(A, left, right);
+    printf("pos = %d\n", pos);
+    quickSort(A, left,    pos - 1);
+    quickSort(A, pos + 1, right);
+  }
+}
+```
