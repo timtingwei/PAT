@@ -768,3 +768,250 @@ int main() {
   return 0;
 }
 ```
+
+### 1022 D进制的A+B (20)（20 point(s)）
+
+输入两个非负10进制整数A和B(<=2^30^-1)，输出A+B的D (1 < D <= 10)进制数。
+
+#### 输入格式：
+
+输入在一行中依次给出3个整数A、B和D。
+
+#### 输出格式：
+
+输出A+B的D进制数。
+
+#### 输入样例：
+123 456 8
+
+#### 输出样例：
+1103
+
+#### Solution:
+
+两数相加计算出的值不断取余数, 除以D, 算出的数进栈, 打印时利用栈的FILO特性 按照二进制数顺序打印。
+
+<span style="color:red">坑点1:</span>
+刚开始觉得两个整数相加可能会溢出, 但是实验之后
+```cpp
+int v = pow(2, 30);
+printf("%d\n", 2*v);    // 数值正常不会溢出
+```
+
+int整数的范围在,` -2^31 ～ +(2^31 -1)` ,` -2 * 10^9 ~ 2 * 10^9`之内, 因此不会溢出
+
+<span style="color:red">坑点2:</span>
+当总和为0时, 无论什么进制都打印出0.
+
+
+```cpp
+#include <iostream>
+#include <stack>
+using namespace std;
+int main() {
+  int a, b, d; cin >> a >> b >> d;
+  int total = a + b;
+  if (total != 0) {
+    stack<int> s;
+    while (total) {
+      s.push(total % d);
+      total /= d;
+    }
+    while (!s.empty()) {
+      printf("%d", s.top());
+      s.pop();
+    }
+  } else { printf("0"); }
+  printf("\n");
+
+  return 0;
+}
+```
+
+
+### 1053. 住房空置率 (20)
+在不打扰居民的前提下，统计住房空置率的一种方法是根据每户用电量的连续变化规律进行判断。判断方法如下：
+在观察期内，若存在超过一半的日子用电量低于某给定的阈值e，则该住房为“可能空置”；
+若观察期超过某给定阈值D天，且满足上一个条件，则该住房为“空置”。
+现给定某居民区的住户用电量数据，请你统计“可能空置”的比率和“空置”比率，即以上两种状态的住房占居民区住房总套数的百分比。
+
+#### 输入格式：
+输入第一行给出正整数N（<=1000），为居民区住房总套数；正实数e，即低电量阈值；正整数D，即观察期阈值。随后N行，每行按以下格式给出一套住房的用电量数据：
+K E1 E2 … EK
+其中K为观察的天数，Ei为第i天的用电量。
+
+#### 输出格式：
+在一行中输出“可能空置”的比率和“空置”比率的百分比值，其间以一个空格分隔，保留小数点后1位。
+
+#### 输入样例：
+5 0.5 10
+6 0.3 0.4 0.5 0.2 0.8 0.6
+10 0.0 0.1 0.2 0.3 0.0 0.8 0.6 0.7 0.0 0.5
+5 0.4 0.3 0.5 0.1 0.7
+11 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1
+11 2 2 2 1 1 0.1 1 0.1 0.1 0.1 0.1
+
+#### 输出样例：
+40.0% 20.0%
+（样例解释：第2、3户为“可能空置”，第4户为“空置”，其他户不是空置。）
+
+#### Solution:
+
+<span style="color:red">思路出错, 观察期k超过D, 且满足条件1, 判断为空置</span>
+
+case2, 3一直过不了。我刚开始认为低于阈值e的天数超过D的时候, 就判为空, 但后来再仔细看, 题目明显是在说, 观察期k超过D。
+
+<span style="color:red">以后条件判断有嵌套和层级的, 一定要注意他们之间的关系, 条件具体是什么, 是否互斥</span>
+
+坑点:
+1, 可能空置和空置是互斥的, 因此用if .. else if
+2, 这里虽然是double类型, 但是对于double类型来说, 判等需要注意精度问题, 如代码2
+3, printf输出保留一位的double类型, `printf("%.1lf", db);`  打印`%`, `printf("%%");`
+
+
+代码2:
+```cpp
+const int EPSINON = 0.000001;
+// if (db1 == db2) {// ..}
+if (db1 - db2 >= -EPSINON && db1 - db2 <= EPSINON) {//..}
+```
+
+
+代码3:
+```cpp
+// c++ cout用setprecision(n), 设置精度, 搭配fixed, 需要iomanip头文件
+#include <iostream>
+#include <iomanip>
+using namespace std;
+int main() {
+  double v = 10;
+  cout << fixed << setprecision(8) << v << endl;
+  return 0;
+}
+```
+
+
+
+```cpp
+#include <cstdio>
+int main() {
+  int N, D; double e;
+  scanf("%d %lf %d", &N, &e, &D);
+  int cnt_may = 0, cnt_empty = 0;
+  for (int i = 0; i < N; i++) {
+    int k, cnt = 0;
+    double tmp;
+    scanf("%d", &k);
+    for (int j = 0; j < k; j++) {
+      scanf("%lf", &tmp);
+      if (tmp < e) {            // bug3?
+        cnt++;
+      }
+    }
+    if (cnt > k/2 && k > D) {   // case2, 3
+      cnt_empty++;
+    } else if (cnt > k/2) {
+      cnt_may++;
+    }
+  }
+  printf("%.1lf%% %.1lf%%\n", (double)cnt_may / N * 100, (double)cnt_empty / N * 100);  // why
+
+  return 0;
+}
+```
+
+
+### 1050 螺旋矩阵（25 point(s)）
+
+本题要求将给定的 N 个正整数按非递增的顺序，填入“螺旋矩阵”。所谓“螺旋矩阵”，是指从左上角第 1 个格子开始，按顺时针螺旋方向填充。要求矩阵的规模为 m 行 n 列，满足条件：m×n 等于 N；m≥n；且 m−n 取所有可能值中的最小值。
+#### 输入格式：
+输入在第 1 行中给出一个正整数 N，第 2 行给出 N 个待填充的正整数。所有数字不超过10^4​​, 相邻数字以空格分隔。
+#### 输出格式：
+输出螺旋矩阵。每行 n 个数字，共 m 行。相邻数字以 1 个空格分隔，行末不得有多余空格。
+#### 输入样例：
+12
+37 76 20 98 76 42 53 95 60 81 58 93
+#### 输出样例：
+98 95 93
+42 37 81
+53 20 76
+58 60 76
+#### Solution:
+
+从1开始递增m, m >= n且差值较小但比0大时候更新min_m, (这里坑点是m能取到N, N = 19, m = 19, n = 1)
+
+用i,j下标代表一个pointer, 移动pointer就是移动i,j; 用flag标记移动的方向, 再设置好上下左右四个边界, 对触碰到边界的情况, 移动的指针回撤, 某个边界缩短(下回不能在进入了), 指针方向改变.
+
+case2, 答案错误, 应该是1 1 输出1的情况
+case6, 7 段错误, 在submit的时候, 一阵乱试。回头想, 如果数组开在外面还发生段错误, 那就是数组开的太小了. 但是如果数组开大又超时的话, 把对二维数组来说, 外层开得大些, 内层开的小些.
+
+需要多练习一些模拟题, 模拟题跟那些有明确tag的题不同, 题目出的比较活, 在某种思路下, 可以需要多种算法组合.
+
+
+```cpp
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+const int MAXN = 10000;          // case bug, 开太大超时
+int ans[MAXN][300];              // case6, 7 开太大超时, 开太小段错误
+int a[MAXN];
+
+bool cmp(int a, int b) {
+  return a >= b;
+}
+
+int main() {
+  int N; scanf("%d", &N);
+  for (int i = 0; i < N; i++) { scanf("%d", &a[i]); }
+
+  int m = 1, n, min_m = m, d;
+  while (m <= N) {                              // debug, m能取到N
+    if (N % m == 0 && m >= N/m) {
+      n = N / m;     int min_n = N / min_m;
+      d = m - n;     int min_d = min_m - min_n;
+      if (d < min_d || min_d < 0) min_m = m;    // debug, case2, 1 1
+    }
+    m++;
+  }
+  m = min_m; n = N / m;
+
+  sort(a, a+N, cmp);   // bug2, 忘记cmp
+
+  int k, flag = 0;
+  int right_n = n, down_m = m, left_n = -1, up_m = -1;   // bug4
+  int i = 0, j = 0;
+  ans[0][0] = a[0]; k = 1;
+  while (k < N) {
+    if (flag == 0) {
+      if (++j == right_n) {
+        j--; up_m++; flag = 1; continue;
+      }
+    } else if (flag == 1) {
+      if (++i == down_m) {
+        i--; right_n--; flag = 2; continue;
+      }
+    } else if (flag == 2) {
+      if (--j == left_n) {
+        j++; down_m--; flag = 3; continue;
+      }
+    } else if (flag == 3) {
+      if (--i == up_m) {
+        i++; left_n++; flag = 0; continue;
+      }
+    }
+    ans[i][j] = a[k++];
+  }
+
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      if (j) printf(" ");
+      printf("%d", ans[i][j]);   // bug, 并不需要两位
+    }
+    printf("\n");
+  }
+
+  return 0;
+}
+```
