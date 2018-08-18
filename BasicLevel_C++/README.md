@@ -638,3 +638,133 @@ int main() {
   return 0;
 }
 ```
+
+
+### 1037 在霍格沃茨找零钱（20 point(s)）
+
+如果你是哈利·波特迷，你会知道魔法世界有它自己的货币系统 —— 就如海格告诉哈利的：“十七个银西可(Sickle)兑一个加隆(Galleon)，二十九个纳特(Knut)兑一个西可，很容易。”现在，给定哈利应付的价钱 P 和他实付的钱 A，你的任务是写一个程序来计算他应该被找的零钱。
+
+#### 输入格式：
+
+输入在 1 行中分别给出 P 和 A，格式为 Galleon.Sickle.Knut，其间用 1 个空格分隔。这里 Galleon 是 [0, 10
+​7] 区间内的整数，Sickle 是 [0, 17) 区间内的整数，Knut 是 [0, 29) 区间内的整数。
+
+#### 输出格式：
+在一行中用与输入同样的格式输出哈利应该被找的零钱。如果他没带够钱，那么输出的应该是负数。
+
+#### 输入样例 1：
+
+10.16.27 14.1.28
+
+#### 输出样例 1：
+3.2.1
+
+#### 输入样例 2：
+14.1.28 10.16.27
+
+#### 输出样例 2：
+-3.2.1
+
+#### Solution:
+
+将所有的币转换成Knut来计算, 最后用总的币除以17*29取整得到Galleon, 剩余部分除以29得到Sickle, 剩余部分就是Knut.
+
+sscanf读取字符数组, 分割成不同的int, 求P, A; 用一个flag标正负, 在输入时计算.
+
+bug1:
+注意四则运算的顺序, 我自己在做的时候, 把` gg = delta / (17*29);`写了成`gg = delta / 17*29;`
+
+
+```cpp
+#include <cstdio>
+
+char str_p[100];
+char str_a[100];
+
+int main() {
+  scanf("%s %s", str_p, str_a);
+  int g, s, k;
+  sscanf(str_p, "%d.%d.%d", &g, &s, &k);
+  int P = 17*29*g + 29*s + k;
+  sscanf(str_a, "%d.%d.%d", &g, &s, &k);
+  int A = 17*29*g + 29*s + k;
+
+  int delta = A-P, flag;
+  if (delta >= 0) {
+    flag = 1;
+  } else {
+    flag = -1; delta *= -1;
+  }
+
+  int gg, ss, kk;
+  gg = delta / (17*29); delta -= 17*29*gg;     // bug1
+  ss = delta / 29;      delta -= 29*ss;
+  kk = delta;
+  printf("%d.%d.%d\n", flag*gg, ss, kk);
+
+  return 0;
+}
+```
+
+### 1057 数零壹（20 point(s)）
+
+给定一串长度不超过10^​5的字符串，本题要求你将其中所有英文字母的序号（字母 a-z 对应序号 1-26，不分大小写）相加，得到整数 N，然后再分析一下 N 的二进制表示中有多少 0、多少 1。例如给定字符串 PAT (Basic)，其字母序号之和为：16+1+20+2+1+19+9+3=71，而 71 的二进制是 1000111，即有 3 个 0、4 个 1。
+
+#### 输入格式：
+
+输入在一行中给出长度不超过 10^5、以回车结束的字符串。
+
+#### 输出格式：
+
+在一行中先后输出 0 的个数和 1 的个数，其间以空格分隔。
+
+#### 输入样例：
+
+PAT (Basic)
+
+#### 输出样例：
+3 4
+
+#### Solution:
+
+字符串中只将英文的序号相加, 得到数N后不断mod 2, 自身除以2, 直到N为0为止, 在这个过程中记录各个位数中01个数.
+
+总结下二进制转换的代码
+```cpp
+int n;
+while (n) {
+  v[cnt++] = n % 2;    // 二进制各个位数, 从右往左
+  n /= 2
+}
+```
+
+坑点:
+> * 1, 做的时候太粗心, 忘记忽略非字母的情况
+> * 2, 字符a是从1开始记, 因此需要将相减后的结果+1
+> * 3, N的初始值没赋值成0, 导致所有case通不过, 低级错误
+
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+  string s; getline(cin, s);
+  int N = 0;  // bug3
+  for (int i = 0; i < s.length(); i++) {
+    if (isalpha(s[i])) {     // bug1
+      N += tolower(s[i]) - 'a' + 1;    // bug2
+    }
+  }
+  int zero = 0, one = 0;
+  while (N) {
+    cout << N % 2 << endl;
+    if (N%2) one++;
+    else zero++;
+    N /= 2;
+  }
+  cout << zero << " " << one << endl;
+  return 0;
+}
+```
