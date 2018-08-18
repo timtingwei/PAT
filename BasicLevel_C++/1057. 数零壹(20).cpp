@@ -31,7 +31,7 @@ using namespace std;
 
 int main() {
   string s; getline(cin, s);
-  int N;
+  int N = 0;  // bug3
   for (int i = 0; i < s.length(); i++) {
     if (isalpha(s[i])) {     // bug1
       N += tolower(s[i]) - 'a' + 1;    // bug2
