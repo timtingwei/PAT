@@ -1,5 +1,21 @@
 # 《算法笔记》
 
+## 2.5
+
+### 2.5.7 sscanf 和 sprintf
+
+sscanf  分解字符数组, 从 字符数组 ->读入-> 其他变量
+```cpp
+sscanf(str, "%d/%lf,%s", &n, &db, str2);
+```
+
+sprintf 打印到字符串, 将 其他变量 ->写入-> 字符数组
+```cpp
+sprintf(str, "%s:%.2f", name, score);
+```
+
+还支持正则表达式
+
 ## 4.1 排序
 
 ## 4.6 two pointers
