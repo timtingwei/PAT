@@ -1,5 +1,5 @@
 // Copyright [2018] <mituh>
-// 1019. 数字黑洞 (20).cpp    // 35 -> 纠结很长时间
+// 1019. 数字黑洞 (20).cpp    // 35 -> 纠结很长时间, 第二次快很多, 但仍然有bug
 /*
 1019 数字黑洞 (20)（20 point(s)）
 
@@ -33,11 +33,43 @@
 输出样例2：
 
 2222 - 2222 = 0000
-
-
-思路:  模拟, 需要递减sort, 再递增排序
-字符串转整数, 整数转字符串
 */
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+bool cmp_down(char a, char b) return a > b;
+bool cmp_up(char a, char b) return a < b;
+int main() {
+  int v, v1, v2; string s;
+  cin >> s;
+  int ok = 0; char first = s[0];
+  for (int i = 1; i < 4; i++) {
+    if (s[i] != s[0]) { ok = 1; break;}
+  }
+  if (!ok) {
+    cout << s << " - " << s << " = 0000" << endl;
+  } else {
+    s.insert(0, 4-s.length(), '0');
+    do {
+      sort(s.begin(), s.end(), cmp_down);
+      v1 = stoi(s);
+      sort(s.begin(), s.end(), cmp_up);
+      v2 = stoi(s);
+      v = v1 - v2;
+      s = to_string(v);
+      s.insert(0, 4-s.length(), '0');
+      printf("%04d - %04d = %04d\n", v1, v2, v);
+    } while (s != "6174");
+  }
+  return 0;
+}
+
+/*
+// 思路:  模拟, 需要递减sort, 再递增排序
+// 字符串转整数, 整数转字符串
+
 
 #include <iostream>
 #include <string>
@@ -93,4 +125,7 @@ int main() {
 
   return 0;
 }
+*/
+
+
 
