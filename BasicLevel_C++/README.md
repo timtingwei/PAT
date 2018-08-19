@@ -438,8 +438,9 @@ D
 TTTTThhiiiis isssss a   tesssst CAaaa asZZZZZZZZZZ
 
 #### Solution:
-tags: 字符串, two pointers,
-双指针的解法:
+tags: 字符串, two pointers, 栈
+
+<span style="color:red">双指针的解法:</span>
 每次读入一个操作符后, 读入一整行,
 如果是C压缩, 如果s[i]==s[i+1], 计数器+1, 否则的话, 就根据计数器进行一次输出.
 如果是D解压缩, 用指针i扫描字符串。如果i对应的是数字的话, 用一个临时j指针, 从i+1开始扫描, 直到j对应的不为数字为止, "数字"字符串转成数字, 作为打印的次数, 打印数字后跟着的字符; 如果i对应的是字符的话, 可以直接打印输出.
@@ -448,7 +449,19 @@ tags: 字符串, two pointers,
 1, 上述压缩方法中, 需要在字符串末尾添加一个'0', 用来使得遍历整个字符串不会出错
 2, j扫描完数字之后, i需要移动到下一组, （数字+字符）or （字符）, 而不是次数字后面跟着的字符, 如果是这样, 下一次进入循环时, 判断出这是一个字符, 就会打印这个字符. 导致case1, 5;
 
+<span style="color:red">栈的解法:</span>
+对于C压缩来说, 将每个读入的字符, 判断是否和栈顶元素相同, 若不同, "清空"一次栈, 打印当前栈大小的次的栈顶字符, 也就是压缩之前的字符串,; 否则若字符与栈顶元素相同, 压入栈。
+对于D解压缩来说, 每次读入一个字符, 如果是数字push; 如果是字母, 获得栈内数字后清空栈, 打印计算得到的次数的栈顶字符, 
 
+
+坑点:
+1, 对于压缩来说, 最后组字符串的压缩还需要后一个字符来判断, 这里我利用读到的"\n"进行区分判断.
+2, 对于解压缩来说, 注意字符情况下又是空栈, 说明只有ch单个字母, 直接putchar()
+
+<span style="color:red">还考虑了将栈换成队列的版本, 但队列在字符转换成数字时候, 虽然是顺序输出, 但需要用stoi进行转换, 这个算量我不太清楚; 但是对栈的版本, 可以从个位数x1开始, 十位数x10, 很自然的计算上去, 因此还是选择用栈合理.</span>
+
+
+two pointer版本:
 ```cpp
 #include <iostream>
 #include <cstdio>
@@ -490,6 +503,54 @@ int main() {
         i = j+1;                   // case1, 5
       } else {
         printf("%c", s[i]); i++;
+      }
+    }
+  }
+  printf("\n");
+  return 0;
+}
+```
+
+栈版本:
+```cpp
+#include <cstdio>
+#include <stack>
+#include <iostream>
+using namespace std;
+
+int main() {
+  char op; cin >> op;
+  stack<char> s; char ch;
+  getchar();
+  if (op == 'C') {
+    while (scanf("%c", &ch) != EOF) {
+      if (s.empty() || s.top() == ch) {
+        s.push(ch);
+      } else {
+        int cnt = s.size(); char old_ch = s.top();
+        while (!s.empty()) s.pop();
+        s.push(ch);
+
+        if (cnt != 1) printf("%d", cnt);    // optimisize
+        printf("%c", old_ch);
+      }
+    }
+  } else if (op == 'D') {
+    while (scanf("%c", &ch) != EOF && ch != '\n' && ch != '\r') {
+      if (isdigit(ch)) {
+        s.push(ch);
+      } else {
+        if (s.empty()) {
+          putchar(ch);
+        } else {
+          int n = 0, b = 1;
+          while (!s.empty()) {
+            n += b * (s.top()-'0');
+            s.pop();
+            b *= 10;
+          }
+          while (n--) putchar(ch);
+        }
       }
     }
   }
