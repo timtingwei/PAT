@@ -404,3 +404,96 @@ int main() {
   return 0;
 }
 ```
+
+
+### 1078 字符串压缩与解压（20 point(s)）
+
+文本压缩有很多种方法，这里我们只考虑最简单的一种：把由相同字符组成的一个连续的片段用这个字符和片段中含有这个字符的个数来表示。例如 ccccc 就用 5c 来表示。如果字符没有重复，就原样输出。例如 aba 压缩后仍然是 aba。
+
+解压方法就是反过来，把形如 5c 这样的表示恢复为 ccccc。
+
+本题需要你根据压缩或解压的要求，对给定字符串进行处理。这里我们简单地假设原始字符串是完全由英文字母和空格组成的非空字符串。
+
+#### 输入格式：
+
+输入第一行给出一个字符，如果是 C 就表示下面的字符串需要被压缩；如果是 D 就表示下面的字符串需要被解压。第二行给出需要被压缩或解压的不超过 1000 个字符的字符串，以回车结尾。题目保证字符重复个数在整型范围内，且输出文件不超过 1MB。
+
+#### 输出格式：
+
+根据要求压缩或解压字符串，并在一行中输出结果。
+
+#### 输入样例 1：
+C
+TTTTThhiiiis isssss a   tesssst CAaaa as
+
+#### 输出样例 1：
+
+5T2h4is i5s a3 te4st CA3a as
+输入样例 2：
+
+D
+5T2h4is i5s a3 te4st CA3a as10Z
+
+#### 输出样例 2：
+TTTTThhiiiis isssss a   tesssst CAaaa asZZZZZZZZZZ
+
+#### Solution:
+tags: 字符串, two pointers,
+双指针的解法:
+每次读入一个操作符后, 读入一整行,
+如果是C压缩, 如果s[i]==s[i+1], 计数器+1, 否则的话, 就根据计数器进行一次输出.
+如果是D解压缩, 用指针i扫描字符串。如果i对应的是数字的话, 用一个临时j指针, 从i+1开始扫描, 直到j对应的不为数字为止, "数字"字符串转成数字, 作为打印的次数, 打印数字后跟着的字符; 如果i对应的是字符的话, 可以直接打印输出.
+
+坑点, 
+1, 上述压缩方法中, 需要在字符串末尾添加一个'0', 用来使得遍历整个字符串不会出错
+2, j扫描完数字之后, i需要移动到下一组, （数字+字符）or （字符）, 而不是次数字后面跟着的字符, 如果是这样, 下一次进入循环时, 判断出这是一个字符, 就会打印这个字符. 导致case1, 5;
+
+
+```cpp
+#include <iostream>
+#include <cstdio>
+#include <string>
+using namespace std;
+
+int main() {
+  char op; scanf("%c", &op);
+  string s;
+  getchar();
+  if (op == 'C') {
+    getline(cin, s); s += '0';
+    int N = s.length()-1;
+    int i = 0, cnt = 1;
+    while (i < N) {
+      if (s[i] == s[i+1]) {
+        cnt++;
+      } else  {
+        if (cnt == 1) {
+          printf("%c", s[i]);
+        } else {
+          printf("%d%c", cnt, s[i]); cnt = 1;
+        }
+      }
+      i++;
+    }
+  } else if (op == 'D') {
+    getline(cin, s);
+    int N = s.length();
+    int i = 0;
+    while (i < N) {
+      if (isdigit(s[i])) {
+        int j = i+1;
+        while (j < N && isdigit(s[j])) j++;
+        int n = stoi(s.substr(i, j));
+        for (int k = 0; k < n; k++) {
+          printf("%c", s[j]);
+        }
+        i = j+1;                   // case1, 5
+      } else {
+        printf("%c", s[i]); i++;
+      }
+    }
+  }
+  printf("\n");
+  return 0;
+}
+```
