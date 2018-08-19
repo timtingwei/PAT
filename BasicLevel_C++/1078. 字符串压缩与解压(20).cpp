@@ -145,7 +145,7 @@ int main() {
   getchar();
   if (op == 'C') {
     // char ch;
-    while (scanf("%c", &ch) != EOF && ch != '\n' && ch != '\r') {
+    while (scanf("%c", &ch) != EOF) {
       if (s.empty() || s.top() == ch) {
         s.push(ch);
       } else {
