@@ -697,3 +697,89 @@ int main() {
   return 0;
 }
 ```
+
+
+### 1023 组个最小数（20 point(s)）
+
+给定数字 0-9 各若干个。你可以以任意顺序排列这些数字，但必须全部使用。目标是使得最后得到的数尽可能小（注意 0 不能做首位）。例如：给定两个 0，两个 1，三个 5，一个 8，我们得到的最小的数就是 10015558。
+
+现给定数字，请编写程序输出能够组成的最小的数。
+
+#### 输入格式：
+输入在一行中给出 10 个非负整数，顺序表示我们拥有数字 0、数字 1、……数字 9 的个数。整数间用一个空格分隔。10 个数字的总个数不超过 50，且至少拥有 1 个非 0 的数字。
+
+#### 输出格式：
+在一行中输出能够组成的最小的数。
+
+#### 输入样例：
+2 2 0 0 0 3 0 0 1 0
+
+#### 输出样例：
+10015558
+
+#### Solution:
+
+贪心, 要让整个数小, 就是数越小就排在越前面。
+观察数列的构造,
+
+"排序"后的数组,
+
+00115558
+10015558
+
+<span style="color:red">0不能作为数的首位, 也就是说拿一个0以外的最小值放在最前面.</span>
+
+12345566
+12345566
+
+直接输出
+
+
+坑点:
+1, 因为给出的每个位置的个数是从0~9的, 字符串本身排列是顺序的, 不需要sort.
+2, 用字符串表示一个整数, 选择一个位置的数字时, 注意它是字符.
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+  string s;
+  for (int i = 0; i < 10; i++) {
+    int cnt; cin >> cnt;
+    for (int j = 0; j < cnt; j++) s += (i + '0');
+  }
+
+  if (s[0] == '0') {
+    int i = 1;
+    while (i < s.length() && s[i] == '0') i++;
+    char tmp = s[0]; s[0] = s[i]; s[i] = tmp;
+  }
+  cout << s << endl;
+  return 0;
+}
+```
+
+
+在寻找第一个非0的数字索引的时候, 不需要遍历, 记录有几个0就可以了。
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+  string s; int first;
+  for (int i = 0; i < 10; i++) {
+    int cnt; cin >> cnt;
+    if (!i) first = cnt;
+    for (int j = 0; j < cnt; j++) s += (i + '0');
+  }
+
+  if (s[0] == '0') {
+    char tmp = s[0]; s[0] = s[first]; s[first] = tmp;
+  }
+  cout << s << endl;
+  return 0;
+}
+```
