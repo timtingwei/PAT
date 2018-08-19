@@ -144,21 +144,16 @@ int main() {
   stack<char> s; char ch;
   getchar();
   if (op == 'C') {
-    // char ch;
     while (scanf("%c", &ch) != EOF) {
       if (s.empty() || s.top() == ch) {
         s.push(ch);
       } else {
-        int cnt = 0; char old_ch = s.top();
-        while (!s.empty()) {
-          s.pop(); cnt++;
-        }
-        if (cnt == 1) {
-          putchar(old_ch);
-        } else {
-          printf("%d%c", cnt, old_ch);
-        }
+        int cnt = s.size(); char old_ch = s.top();
+        while (!s.empty()) s.pop();
         s.push(ch);
+
+        if (cnt != 1) printf("%d", cnt);    // optimisize
+        printf("%c", old_ch);
       }
     }
   } else if (op == 'D') {
@@ -166,16 +161,16 @@ int main() {
       if (isdigit(ch)) {
         s.push(ch);
       } else {
-        if (!s.empty()) {
+        if (s.empty()) {
+          putchar(ch);
+        } else {
           int n = 0, b = 1;
           while (!s.empty()) {
-            n += b * (s.top() - '0');
+            n += b * (s.top()-'0');
             s.pop();
             b *= 10;
           }
           while (n--) putchar(ch);
-        } else {
-          putchar(ch);
         }
       }
     }
@@ -183,4 +178,5 @@ int main() {
   printf("\n");
   return 0;
 }
+
 */
