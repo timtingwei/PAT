@@ -110,6 +110,7 @@ The average of 3 numbers is 5.93
 仍旧不行...
  */
 
+/*
 #include <iostream>
 #include <cctype>
 #include <cstdio>
@@ -171,5 +172,93 @@ int main() {
   }
 
 
+  return 0;
+}
+*/
+
+/*
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+  int N; cin >> N;
+  int cnt = 0; double sum = 0;
+  while (N--) {
+    string s; cin >> s;
+    int ok = 1, point_cnt = 0, pt_pos = 0;
+    for (int i = 0; i < s.length(); i++) {
+      if (s[i] == '-' || s[i] == '+') {
+        if (i != 0) { ok = 0; break;}
+      }
+
+      if (s[i] == '.') {
+        pt_pos = i;
+        point_cnt++;
+        if (point_cnt > 1) { ok = 0; break;}
+      }
+
+      if (isalpha(s[i])) {ok = 0; break;}
+    }
+    if (ok && (!point_cnt)) {
+      double d = stod(s);
+      if (d+1000 < 0.005 || d-1000 > 0.005) ok = 0;
+    }
+
+    if (ok && point_cnt) {
+      int len = s.length() - pt_pos - 1;
+      if (len > 2) ok = 0;
+    }
+
+    if (!ok) {
+      cout << "ERROR: " << s <<" is not a legal number" << endl;
+    } else {
+      sum += stod(s);
+      cnt++;
+    }
+  }
+  if (!cnt) {
+    cout << "The average of 0 numbers is Undefined" << endl;
+  } else if (cnt == 1) {
+    printf("The average of 1 number is %.2lf\n", sum);
+  } else {
+    printf("The average of %d numbers is %.2lf\n", cnt, sum/cnt);
+  }
+  return 0;
+}
+*/
+
+
+#include <iostream>
+#include <cstring>
+#include <string.h>
+using namespace std;
+
+int main() {
+  int N; scanf("%d", &N);
+  char s[50], b[50];
+  int cnt = 0; double sum = 0, tmp;
+  while (N--) {;
+    scanf("%s", s);
+    sscanf(s, "%lf", &tmp);
+    sprintf(b, "%.2lf", tmp);
+    int flag = 0;
+    for (int i = 0; i < strlen(s); i++) {
+      if (s[i] != b[i]) { flag = 1; break;}
+    }
+    if (flag || tmp < -1000 || tmp > 1000) {
+      printf("ERROR: %s is not a legal number\n", s);
+    } else {
+      sum += tmp; cnt++;
+    }
+  }
+
+  if (!cnt) {
+    printf("The average of 0 numbers is Undefined\n");
+  } else if (cnt == 1) {
+    printf("The average of 1 number is %.2lf\n", sum);
+  } else {
+    printf("The average of %d numbers is %.2lf\n", cnt, sum/cnt);
+  }
   return 0;
 }
