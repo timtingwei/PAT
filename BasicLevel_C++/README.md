@@ -900,3 +900,192 @@ int main() {
   return 0;
 }
 ```
+
+### 1085 PAT单位排行（25 point(s)）
+
+每次 PAT 考试结束后，考试中心都会发布一个考生单位排行榜。本题就请你实现这个功能。
+
+#### 输入格式：
+输入第一行给出一个正整数 N（≤10^​5），即考生人数。随后 N 行，每行按下列格式给出一个考生的信息：
+准考证号 得分 学校
+其中准考证号是由 6 个字符组成的字符串，其首字母表示考试的级别：B代表乙级，A代表甲级，T代表顶级；得分是 [0, 100] 区间内的整数；学校是由不超过 6 个英文字母组成的单位码（大小写无关）。注意：题目保证每个考生的准考证号是不同的。
+
+#### 输出格式：
+首先在一行中输出单位个数。随后按以下格式非降序输出单位的排行榜：
+排名 学校 加权总分 考生人数
+其中排名是该单位的排名（从 1 开始）；学校是全部按小写字母输出的单位码；加权总分定义为乙级总分/1.5 + 甲级总分 + 顶级总分*1.5的整数部分；考生人数是该属于单位的考生的总人数。
+
+学校首先按加权总分排行。如有并列，则应对应相同的排名，并按考生人数升序输出。如果仍然并列，则按单位码的字典序输出。
+
+#### 输入样例：
+10
+A57908 85 Au
+B57908 54 LanX
+A37487 60 au
+T28374 67 CMU
+T32486 24 hypu
+A66734 92 cmu
+B76378 71 AU
+A47780 45 lanx
+A72809 100 pku
+A03274 45 hypu
+
+#### 输出样例：
+5
+1 cmu 192 2
+1 au 192 3
+3 pku 100 1
+4 hypu 81 2
+4 lanx 81 2
+
+#### Solution:
+
+最后一个测试点一直通不过, 问题不是出在对score相加有误差, score我也定义成了double, 问题是出在: <span style="color:red">排序是根据加权总分取整后的值来的</span>, 但是我的做法只是将Node, 从mp中push_back进入vector, 这时的Node.score还是那个double.应该是说, 在排序的时候, score已经是double舍去整数部分后的int了。
+
+实际上, 这个bug可以在调试排名前两位的score的时候查错, 但是我把问题的关注点放在了浮点数比较的精度上, 导致我用EP=-0.2去迎合答案, 实际上这是一种比较作死的方法.
+
+##### 坑点:
+
+1, 选择用1mp + 1vector 和 3mp+1vector的差别
+排序用vector, 对学校进行关联用mp。另外关联好学校后, 再使用两个mp, 记录加权总分和考生人数.
+
+原先的做法是, mp中存储Node, 当需要进行排序时, 直接用Node{a, b, c}构造一个node, push_back进vector
+```cpp
+v.push_back(Node{it->second.name, (int)it->second.score, it->second.num});
+```
+但这里出错的关键就是, 不能用int类型的去构造这个对象的score实例变量了, 因此还是选择将Node中的score声明成int类型, Node的意义在于排序。抛开排序以外, 用mp去关联。
+
+将一个map<string, Node> mp, 拆开成两个较小的map容器:
+```cpp
+map<string, double> sum;
+map<string, int> num;
+```
+这样做的好处是什么?
+我觉得是Node中sum类型的转换代价小了, 只要在vector中存放node, 就可以把node中sum声明成int类型. 在这种情况下, 若还要在mp中存放node的话, 这里的sum是double类型, 因此选择用两个单独的map存放sum和num, 用一个map存放学校名字, 只是用于归并.
+
+
+##### 新技巧:
+1, map的find(key)函数, 返回键为key的映射的迭代器。 如果存在的情况好理解, 使用it->second调用; 如果不存在的情况是怎么样呢?
+
+map提供了两种方式来检查是否包含key:
+```cpp
+mp.count(key);  // 包含返回1, 不包含返回0
+mp.find(key);   // 返回迭代器, 如果迭代器是mp.end()说明不存在.
+
+// 第一种方法count(key)
+if (!mp.count(id)) {
+  mp[school].name = school;    // 两次查找
+}
+
+// 第二种方法find(key)
+auto it = mp.find(id);
+if (it == mp.end()) {
+  it->second.name = school;    // 一次查找
+}
+
+```
+
+而我在做题的时候, 为了解决问题, 使用了笨方法
+```cpp
+if ((mp.find(id)->second.name).empty()) {   // why?
+  mp[school].name = school;
+}
+```
+
+2, 如何优雅的向一个vector中push_back入一个Node
+
+我一直以来都用的方法。
+```cpp
+for (auto it = mp.begin(); it != mp.end(); it++) {
+  Node node;
+  node.name = it->second.name;
+  node.score = (int)it->second.score;    // important!
+  node.num = it->second.num;
+  v.push_back(node);
+}
+```
+
+更加优雅的方法：
+```cpp
+v.push_back(Node{it->first, (int)sum[it->first], num[it->first]});
+```
+
+这种方法有个前提, 要么就是写了构造函数, 要么就是变量没有被定义。
+```cpp
+struct Node {
+  string name;
+  int score;        // int score = 0;   这样不能用上述Node{a, b, c}方法构造了.
+  int num;
+};
+```
+
+3, map和unordered_map的区别
+`unordered_map`内部用散列来代替红黑树实现map, 内部不排序。
+来处理只映射而不按key排序的需求, 速度比map要快得多. 因此在这里替换一下
+
+##### 代码:
+```cpp
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Node {
+  string name;
+  int score;
+  int num;
+};
+
+unordered_map<string, Node> mp;
+unordered_map<string, double> sum;
+unordered_map<string, int> num;
+
+vector<Node> v;   // bug01
+
+bool cmp(Node n1, Node n2) {
+  if (n1.score != n2.score) return n1.score >= n2.score;
+  if (n1.num != n2.num) return n1.num < n2.num;
+  return n1.name < n2.name;
+}
+
+int main() {
+  int N; scanf("%d", &N);
+  for (int i = 0; i < N; i++) {
+    string id, school; double score;
+    cin >> id;
+    scanf("%lf", &score);
+    cin >> school;
+    for (int i = 0; i < school.length(); i++) {
+      school[i] = tolower(school[i]);
+    }
+    if (id[0] == 'B') {
+      score = score / 1.5;
+    } else if (id[0] == 'T') {
+      score = score * 1.5;
+    }
+    if (!mp.count(school)) {
+      mp[school].name = school;
+    }
+    sum[school] += score;   // bug05
+    num[school]++;
+  }
+  for (auto it = mp.begin(); it != mp.end(); it++) {
+    v.push_back(Node{it->first, (int)sum[it->first], num[it->first]});
+  }
+  // case7在排序时候已经在比较score
+  sort(v.begin(), v.end(), cmp);
+
+  cout << v.size() << endl;                 // bug07
+  int r = 1;
+  cout << r << " " << v[0].name << " " << v[0].score << " " << v[0].num << endl;
+  for (int i = 1; i < v.size(); i++) {
+    if (v[i].score != v[i-1].score) {
+      r = i + 1;
+    }
+    cout << r << " " << v[i].name << " " << v[i].score << " " << v[i].num << endl;
+  }
+  return 0;
+}
+```
