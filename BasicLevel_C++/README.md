@@ -460,7 +460,7 @@ int main() {
 }
 ```
 
-
+    
 ### 1052 卖个萌（20 point(s)）
 
 萌萌哒表情符号通常由“手”、“眼”、“口”三个主要部分组成。简单起见，我们假设一个表情符号是按下列格式输出的：
@@ -501,6 +501,8 @@ Are you kidding me? @\/@
 #### Solution:
 
 
+两个坑点:
+1, 之前对substr理解有误, s.substr(pos, length); 第一个参数是下标, <span style="color:red">第二个参数是长度</span>, 之前一直以为是要获取元素的后一个元素.这个问题把我坑爹了半小时.
 ```cpp
 string s = "abcd";
 string tmp = s.substr(0, 2);
@@ -508,7 +510,7 @@ cout << tmp << endl;      // ab
 tmp = s.substr(1, 2);
 cout << tmp << endl;      // bc
 ```
-
+2, 序号从1开始, 在判断范围的时, 从1~n, 我之前写成了0~n-1...
 
 
 ```cpp
