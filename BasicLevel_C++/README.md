@@ -459,3 +459,112 @@ int main() {
   return 0;
 }
 ```
+
+
+### 1052 卖个萌（20 point(s)）
+
+萌萌哒表情符号通常由“手”、“眼”、“口”三个主要部分组成。简单起见，我们假设一个表情符号是按下列格式输出的：
+```
+[左手]([左眼][口][右眼])[右手]
+现给出可选用的符号集合，请你按用户的要求输出表情。
+```
+
+#### 输入格式：
+
+输入首先在前三行顺序对应给出手、眼、口的可选符号集。每个符号括在一对方括号 []内。题目保证每个集合都至少有一个符号，并不超过 10 个符号；每个符号包含 1 到 4 个非空字符。
+
+之后一行给出一个正整数 K，为用户请求的个数。随后 K 行，每行给出一个用户的符号选择，顺序为左手、左眼、口、右眼、右手——这里只给出符号在相应集合中的序号（从 1 开始），数字间以空格分隔。
+
+#### 输出格式：
+
+对每个用户请求，在一行中输出生成的表情。若用户选择的序号不存在，则输出 Are you kidding me? @\/@。
+
+#### 输入样例：
+```
+[╮][╭][o][~\][/~]  [<][>]
+ [╯][╰][^][-][=][>][<][@][⊙]
+[Д][▽][_][ε][^]  ...
+4
+1 1 2 2 2
+6 8 1 5 5
+3 3 4 3 3
+2 10 3 9 3
+```
+
+#### 输出样例：
+
+╮(╯▽╰)╭
+<(@Д=)/~
+o(^ε^)o
+Are you kidding me? @\/@
+
+#### Solution:
+
+
+```cpp
+string s = "abcd";
+string tmp = s.substr(0, 2);
+cout << tmp << endl;      // ab
+tmp = s.substr(1, 2);
+cout << tmp << endl;      // bc
+```
+
+
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+vector<vector<string> > emoji;
+int order[6] = {0, 1, 2, 1, 0};
+
+int main() {
+  for (int k = 0; k < 3; k++) {
+    string s;
+    getline(cin, s);
+    int n = s.length();
+    vector<string> row;
+    int i = 0, j = 0;
+    while (i < n) {
+      if (s[i] == '[') {
+        string tmp_s;
+        j = i+1;
+        while (j < n && s[j] != ']') j++;
+        tmp_s = s.substr(i+1, j-i-1);                 // bug02
+        row.push_back(tmp_s);
+        i = j;
+      } else {
+        i++;
+      }
+    }
+    emoji.push_back(row);
+  }
+
+  int K; cin >> K;
+  for (int k = 0; k < K; k++) {
+    if (k) cout << endl;
+    string ans_s; int ok = 1;
+    for (int i = 0; i < 5; i++) {
+      int tmp; cin >> tmp;
+      int n = emoji[order[i]].size();
+      // if (tmp < 0 || tmp > n-1) {                  // bug04
+      if (tmp < 1 || tmp > n) {
+        // cout << "Are you kidding me? @\\/@\n";     // bug01
+        ok = 0;
+        break;
+      }
+      if (i == 1) ans_s += "(";
+      else if (i == 4) ans_s += ")";
+      ans_s += emoji[order[i]][tmp-1];
+    }
+    if (ok) {
+      cout << ans_s;
+    } else {
+      cout << "Are you kidding me? @\\/@";            // bug03
+    }
+  }
+  return 0;
+}
+```

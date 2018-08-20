@@ -59,7 +59,7 @@ case 1: Presentation Error
 case 2: a, b, c, d, e不能小于1, 要控制输入的合法性
 */
 
-
+/*
 #include <iostream>
 #include <vector>
 #include <string>
@@ -106,7 +106,7 @@ int main() {
   }
   return 0;
 }
-
+*/
 
 
 /*
@@ -156,3 +156,59 @@ int main() {
   return 0;
 }
 */
+
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+vector<vector<string> > emoji;
+int order[6] = {0, 1, 2, 1, 0};
+
+int main() {
+  for (int k = 0; k < 3; k++) {
+    string s;
+    getline(cin, s);
+    int n = s.length();
+    vector<string> row;
+    int i = 0, j = 0;
+    while (i < n) {
+      if (s[i] == '[') {
+        string tmp_s;
+        j = i+1;
+        while (j < n && s[j] != ']') j++;
+        tmp_s = s.substr(i+1, j-i-1);                 // bug02
+        row.push_back(tmp_s);
+        i = j;
+      } else {
+        i++;
+      }
+    }
+    emoji.push_back(row);
+  }
+
+  int K; cin >> K;
+  for (int k = 0; k < K; k++) {
+    if (k) cout << endl;
+    string ans_s; int ok = 1;
+    for (int i = 0; i < 5; i++) {
+      int tmp; cin >> tmp;
+      int n = emoji[order[i]].size();
+      // if (tmp < 0 || tmp > n-1) {                  // bug04
+      if (tmp < 1 || tmp > n) {
+        // cout << "Are you kidding me? @\\/@\n";     // bug01
+        ok = 0;
+        break;
+      }
+      if (i == 1) ans_s += "(";
+      else if (i == 4) ans_s += ")";
+      ans_s += emoji[order[i]][tmp-1];
+    }
+    if (ok) {
+      cout << ans_s;
+    } else {
+      cout << "Are you kidding me? @\\/@";            // bug03
+    }
+  }
+  return 0;
+}
