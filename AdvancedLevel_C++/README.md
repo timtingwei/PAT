@@ -184,7 +184,7 @@ int main() {
 
 
 ### 1028 List Sorting (25)
-
+    
 Excel can sort records according to any column. Now you are supposed to imitate this function.
 
 #### Input
