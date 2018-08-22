@@ -57,6 +57,8 @@ int main() {
 }
 */
 
+/*
+// 字符串删除的解法
 // case 1, 2 WA
 // 怎么解决某个珠子需要两颗的问题?
 // 能否对字符串删除操作
@@ -82,5 +84,36 @@ int main() {
     cout << "No " << t.length() - cnt << endl;
   }
 
+  return 0;
+}
+*/
+
+// Hash表的解法, 复杂度为O(n), 查找为O(1)
+// 7:49 -> 8:00 = 11min
+#include <cstdio>
+#include <cstring>
+int give[200];
+char A[1050];
+char B[1050];
+
+int main() {
+  scanf("%s %s", A, B);
+  memset(give, 0, sizeof(give));
+  for (int i = 0; i < strlen(A); i++) {
+    give[(int)A[i]]++;
+  }
+  int cnt = 0;
+  for (int i = 0; i < strlen(B); i++) {
+    if (!give[(int)B[i]]) {
+      cnt++;
+    } else {
+      give[(int)B[i]]--;
+    }
+  }
+  if (cnt == 0) {
+    printf("Yes %lu\n", strlen(A) - strlen(B));
+  } else {
+    printf("No %d\n", cnt);
+  }
   return 0;
 }
