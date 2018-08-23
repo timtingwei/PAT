@@ -231,6 +231,12 @@ int main() {
 4.24
 
 #### Solution:
+
+注意, 开方是平方的逆过程.
+
+对小数位后四舍五入的做法, 先将double扩大100倍(小数点后2位), 进位后, 缩小100倍.
+其实就是进小数点后2位。
+
 ```cpp
 #include <cmath>
 #include <cstdio>
@@ -272,6 +278,10 @@ tags: Hash散列
 3 6 9 26
 
 #### Solution:
+
+将朋友证号作为key值, 建成hash表, 重新遍历一遍就可以输出。
+
+注意点: 用一个max_p可以限定hash表遍历的范围.
 
 ```cpp
 #include <cstdio>
@@ -332,6 +342,17 @@ int main() {
 5
 10000 23333 44444 55555 88888
 
+#### Solution:
+建立两张Hash表, 一张情侣id之间的映射, 另外一张是用于判断要查找的id是否已经有它的爱人出现过。
+
+
+就是说， 查找时, 抛开查找的几个人不说, 判断它是不是有情侣, 然后再看它的情侣是不是出现在这次晚会中了。
+先它将id映射到情侣的id, 如果存在它的情侣, 删除它的情侣(自己本身不需要添加); 如果不存在情侣, 或者是情侣没来, 就把自己添加到单身狗表中。
+
+最后剩下的就是单身狗表。
+
+坑点是:
+char* 作为key值不行, 不清楚什么原因, 就用string吧。
 
 ```cpp
 #include <iostream>
@@ -421,36 +442,21 @@ Not Exist
 
 #### Solution:
 
+这道题本身没什么难度, 特别的是, 由于题目表述含糊, 很多实际的判断条件要根据实际调试得到:
+
+比如以下,
+坑点:
+> * 1, 充分大不意味着是最大, 只要是满足比TOL就行了。
+> * 2, 需要每个相邻位置满足比TOL大, 不是一个, 也不是总和.
+> * 3, 当只有一个颜色的时候, 只输出它, 不然case5通不过.
+> * 4, 序号是从1开始的, 在最后print时候+1就好了.
+
+我自己发现的一些问题, 
+> * 1, Hash表来判断是否有颜色重复, 但是有2^24, 表很大。 memset的话超时, 因此不用memset, 让Node的构造函数自己去置cnt为0
+> * 2, c++里面不要用move作为变量名去定义, 会冲突.
+> * 3, struct后的;不要再忘记了。
+
 ```cpp
-debug:
-
-Error1:
-4 5 2
-0 0 0 0
-0 0 3 0
-0 0 0 0
-0 5 0 0
-0 0 0 0
-(3, 2): 3
-
-// 充分大并不意味着最大..
-
-
-3 3 5
-1 2 3
-3 4 5
-5 6 7
-Not Unique
-*/
-
-
-// case5
-/*
-1 1 2
-2
-*/
-
-
 #include <cstdio>
 #include <cmath>
 #include <vector>
@@ -471,13 +477,6 @@ int a[MAXM][MAXM];
 int grid[9][3] = {{-1, -1}, {-1, 0}, {-1, 1},        // bug03, 不能定义成move
                   {0 , -1},          {0, 1},
                   {1,  -1}, {1 , 0}, {1, 1}};
-
-void test_printf_show(vector<Node> v) {
-  for (int i = 0; i < v.size(); i++) {
-    printf("x = %d, y = %d, color = %d\n", v[i].x, v[i].y, v[i].color);
-  }
-  printf("\n");
-}
 
 int main() {
   int M, N, TOL;
@@ -505,7 +504,7 @@ int main() {
       v.push_back(dup_color[i]);
     }
   }
-// test_printf_show(v);
+
   int max_d = 0;
   for (int iv = 0; iv < v.size(); iv++) {
     int i = v[iv].x, j = v[iv].y, color = v[iv].color;   // 难道是色彩均超过TOL?
@@ -514,7 +513,6 @@ int main() {
       int x = i + grid[k][0], y = j + grid[k][1];
       if (0 <= x && x < M && 0 <= y && y < N) {
         int color_b = a[x][y];
-// printf("delta = %d\n", abs(color_b-color));
         int dd = abs(color_b-color);
         if (dd > TOL) {                                  // 单个超过TOL
           delta += dd;                          // bug03:充分大,不是最大
@@ -523,19 +521,11 @@ int main() {
         }
       }
     }
-// printf("\n");
-    if (ok && delta != 0) {        // to?
-// printf("delta total = %d\n", delta);
+    if (ok && delta != 0) {
       max_v.push_back(v[iv]);
     }
-    // if (delta > max_d) {
-    //   max_d = delta; max_v.clear(); max_v.push_back(v[iv]);
-    // } else if (delta == max_d) {
-    //   max_v.push_back(v[iv]);
   }
-// test_printf_show(max_v);
   if (max_v.size() == 1) {
-    // printf("(%d, %d): %d\n", max_v[0].x+1, max_v[0].y+1, max_v[0].color);
     printf("(%d, %d): %d\n", max_v[0].y+1, max_v[0].x+1, max_v[0].color);
   } else if (max_v.size() == 0) {
     printf("Not Exist\n");
@@ -545,3 +535,58 @@ int main() {
   return 0;
 }
 ```
+
+### 1049 数列的片段和(20)
+
+给定一个正数数列，我们可以从中截取任意的连续的几个数，称为片段。例如，给定数列 { 0.1, 0.2, 0.3, 0.4 }，我们有 (0.1) (0.1, 0.2) (0.1, 0.2, 0.3) (0.1, 0.2, 0.3, 0.4) (0.2) (0.2, 0.3) (0.2, 0.3, 0.4) (0.3) (0.3, 0.4) (0.4) 这 10 个片段。
+
+给定正整数数列，求出全部片段包含的所有的数之和。如本例中 10 个片段总和是 0.1 + 0.3 + 0.6 + 1.0 + 0.2 + 0.5 + 0.9 + 0.3 + 0.7 + 0.4 = 5.0。
+
+#### 输入格式：
+输入第一行给出一个不超过10^5的正整数 N，表示数列中数的个数，第二行给出 N 个不超过 1.0 的正数，是数列中的数，其间以空格分隔。
+
+#### 输出格式：
+在一行中输出该序列所有片段包含的数之和，精确到小数点后 2 位。
+
+#### 输入样例：
+4
+0.1 0.2 0.3 0.4
+
+#### 输出样例：
+5.00
+
+#### Solution:
+```
+3 5 9 8 1
+
+3    5    9    8    1     // n   个 1
+35   59   98   81         // n-1 个 2
+359  598  981             // n-2 个 3
+3598 5981                 // ...
+35981                     // 1   个n
+```
+
+可直接归纳得到每个位置数被算了多少次
+```
+3  5     9      8        1
+5  4+4   3+3+3  2+2+2+2  1+1+1+1+1
+```
+i位置的数, 被计算了(n-i)*(i+1)次
+
+
+得到代码:
+```cpp
+#include <cstdio>
+
+int main() {
+  int N; scanf("%d", &N);
+  double sum = 0.0, tmp;
+  for (int i = 0; i < N; i++) {
+    scanf("%lf", &tmp);
+    sum += tmp * (N-i)*(i+1);
+  }
+  printf("%.2lf", sum);
+  return 0;
+}
+```
+    
