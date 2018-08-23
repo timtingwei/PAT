@@ -118,173 +118,6 @@ int main() {
 
 
 
-
-### 1066 图像过滤（15 point(s)）
-
-图像过滤是把图像中不重要的像素都染成背景色，使得重要部分被凸显出来。现给定一幅黑白图像，要求你将灰度值位于某指定区间内的所有像素颜色都用一种指定的颜色替换。
-
-#### 输入格式：
-输入在第一行给出一幅图像的分辨率，即两个正整数 M 和 N（0<M,N≤500），另外是待过滤的灰度值区间端点 A 和 B（0≤A<B≤255）、以及指定的替换灰度值。随后 M 行，每行给出 N 个像素点的灰度值，其间以空格分隔。所有灰度值都在 [0, 255] 区间内。
-
-#### 输出格式：
-输出按要求过滤后的图像。即输出 M 行，每行 N 个像素灰度值，每个灰度值占 3 位（例如黑色要显示为 000），其间以一个空格分隔。行首尾不得有多余空格。
-
-#### 输入样例：
-3 5 100 150 0
-3 189 254 101 119
-150 233 151 99 100
-88 123 149 0 255
-
-#### 输出样例：
-003 189 254 000 000
-000 233 151 099 000
-088 000 000 000 255
-
-#### Solution:
-
-简单题耗了很长时间。
-
-几点要注意的：
-> 1, 简单题也要写最核心的伪代码, 让主要思路不乱。 比如这题将灰度区间内的替换, 而不是之外.
-> 2, 对于边界条件, 不确定可以先留出来, submit一次之后再改(主体对, 再改细节), 比如double还是int
-> 3, 要调整好心态.
-
-```cpp
-#include <cstdio>
-int main() {
-  int M, N;
-  scanf("%d %d", &M, &N);
-  int a, b, rp, tmp;
-  scanf("%d %d %d", &a, &b, &rp);
-  for (int i = 0; i < M; i++) {
-    if (i) printf("\n");
-    for (int j = 0; j < N; j++) {
-      scanf("%d", &tmp);
-      if (j) printf(" ");
-      if (a <= tmp && tmp <= b) {
-        printf("%03d", rp);
-      } else {
-        printf("%03d", tmp);
-      }
-    }
-  }
-  return 0;
-}
-```
-
-
-### 1021 个位数统计(15)
-tags:Hash散列
-
-给定一个 k 位整数 N=d, 请编写程序统计每种不同的个位数字出现的次数。
-例如：给定 N=100311，则有 2 个 0，3 个 1，和 1 个 3。
-
-#### 输入格式：
-每个输入包含 1 个测试用例，即一个不超过 1000 位的正整数 N。
-
-#### 输出格式：
-对 N 中每一种不同的个位数字，以 D:M 的格式在一行中输出该位数字 D 及其在 N 中出现的次数 M。要求按 D 的升序输出。
-
-#### 输入样例：
-100311
-
-#### 输出样例：
-0:2
-1:3
-3:1
-
-#### Solution:
-
-统计和查找用Hash表.
-以字符数组的形式读入"整数", 扫描这个字符数组, 每个数字字符ch对应的Hash表位置是它的ch-'a'位置. 该位置变量+1
-
-扫描完成后, 扫描Hash表, 如果某个地址上值不为0就打印出个数, 自然升序.
-
-```cpp
-#include <cstdio>
-#include <cstring>
-
-int cnt[11];
-char s[1050];
-int main() {
-  scanf("%s", s);
-  memset(cnt, 0, sizeof(cnt));
-  for (int i = 0; i < strlen(s); i++) {
-    cnt[s[i]-'0']++;
-  }
-  int flag = 0;
-  for (int i = 0; i < 10; i++) {
-    if (cnt[i]) {
-      if (!flag) {
-        flag = 1;
-      } else {
-        printf("\n");
-      }
-      printf("%d:%d", i, cnt[i]);
-    }
-  }
-  return 0;
-}
-```
-
-
-### 1029 旧键盘(20)
-
-旧键盘上坏了几个键，于是在敲一段文字的时候，对应的字符就不会出现。现在给出应该输入的一段文字、以及实际被输入的文字，请你列出肯定坏掉的那些键。
-
-#### 输入格式：
-输入在 2 行中分别给出应该输入的文字、以及实际被输入的文字。每段文字是不超过 80 个字符的串，由字母 A-Z（包括大、小写）、数字 0-9、以及下划线 _（代表空格）组成。题目保证 2 个字符串均非空。
-
-#### 输出格式：
-按照发现顺序，在一行中输出坏掉的键。其中英文字母只输出大写，每个坏键只输出一次。题目保证至少有 1 个坏键。
-
-#### 输入样例：
-```
-7_This_is_a_test
-_hs_s_a_es
-```
-
-#### 输出样例：
-7TI
-
-
-#### Solution:
-
-通过实际被输出的文字建立可行的Hash表, f(key) = toupper(key) - '0';
-
-某个下标对应的值为1代表可行.
-
-遍历输入的那段文字, 若不在Hash表中的, 则是坏键。
-
-坑点:
-1, 因为英文字母只输出大写, 所以建表时, 把所有的alpha变成大小来建立, 用大写索引, 用大写输出.
-2, 不用在意ascii码, 只要随便取个字符, 记录相对距离就可以。
-3, 因为要保证每个坏键只输出一次, 找到一个坏键之后, 在hash表中改成1, 下次这个碰到这个键, 就可以用if避开它了。
-
-```cpp
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-int ok[500];
-char s[85];
-char rst[85];
-
-int main() {
-  scanf("%s %s", s, rst);
-  for (int i = 0; i < strlen(rst); i++) {
-    ok[toupper(rst[i]) - '0'] = 1;
-  }
-
-  for (int i = 0; i < strlen(s); i++) {
-    if (!ok[  toupper(s[i]) - '0']) {
-      printf("%c", toupper(s[i]));
-      ok[toupper(s[i]) - '0'] = 1;   // bug01
-    }
-  }
-  return 0;
-}
-```
-    
     
 ### 1062 最简分数（20 point(s)）
 
@@ -371,6 +204,344 @@ int main() {
     }
   }
   printf("\n");
+  return 0;
+}
+```
+
+### 1063 计算谱半径(20)
+
+在数学中，矩阵的“谱半径”是指其特征值的模集合的上确界。换言之，对于给定的 n 个复数空间的特征值 它们的模为实部与虚部的平方和的开方，而“谱半径”就是最大模。
+现在给定一些复数空间的特征值，请你计算并输出这些特征值的谱半径。
+
+#### 输入格式：
+输入第一行给出正整数 N（≤ 10 000）是输入的特征值的个数。随后 N 行，每行给出 1 个特征值的实部和虚部，其间以空格分隔。注意：题目保证实部和虚部均为绝对值不超过 1000 的整数。
+
+#### 输出格式：
+在一行中输出谱半径，四舍五入保留小数点后 2 位。
+
+#### 输入样例：
+5
+0 1
+2 0
+-1 0
+3 3
+0 -3
+
+#### 输出样例：
+4.24
+
+#### Solution:
+```cpp
+#include <cmath>
+#include <cstdio>
+
+int main() {
+  int N, a, b; scanf("%d", &N);
+  double max = 0, tmp;
+
+  while (N--) {
+    scanf("%d %d", &a, &b);
+    tmp = sqrt(a*a+b*b);
+    if (tmp > max) max = tmp;
+  }
+  printf("%.2lf", floor(max * 100 + 0.5)/100);
+
+  return 0;
+}
+```
+
+### 1064 朋友数(20)
+tags: Hash散列
+
+如果两个整数各位数字的和是一样的，则被称为是“朋友数”，而那个公共的和就是它们的“朋友证号”。例如 123 和 51 就是朋友数，因为 1+2+3 = 5+1 = 6，而 6 就是它们的朋友证号。给定一些整数，要求你统计一下它们中有多少个不同的朋友证号。
+
+#### 输入格式：
+输入第一行给出正整数 N。随后一行给出 N 个正整数，数字间以空格分隔。题目保证所有数字小于 10
+​4
+​​ 。
+
+#### 输出格式：
+首先第一行输出给定数字中不同的朋友证号的个数；随后一行按递增顺序输出这些朋友证号，数字间隔一个空格，且行末不得有多余空格。
+
+#### 输入样例：
+8
+123 899 51 998 27 33 36 12
+
+#### 输出样例：
+4
+3 6 9 26
+
+#### Solution:
+
+```cpp
+#include <cstdio>
+#include <cstring>
+
+int id[10050];
+char digit[6];
+
+int main() {
+  int N; scanf("%d", &N);
+  int cnt = 0, max_p = 0;
+  while (N--) {
+    scanf("%s", digit);
+    int num = 0;
+    for (int i = 0; i < strlen(digit); i++) {
+      num += digit[i] - '0';
+    }
+
+    if (!id[num]) {
+      id[num] = 1;
+      cnt++;
+      if (num > max_p) max_p = num;
+    }
+  }
+
+  int flag = 0;
+  printf("%d\n", cnt);
+  for (int i = 0; i <= max_p; i++) {
+    if (id[i]) {
+      if (flag) printf(" ");
+      printf("%d", i);
+      flag = 1;
+    }
+  }
+  return 0;
+}
+```
+    
+
+### 1065 单身狗(25) 
+“单身狗”是中文对于单身人士的一种爱称。本题请你从上万人的大型派对中找出落单的客人，以便给予特殊关爱。
+
+#### 输入格式：
+输入第一行给出一个正整数 N（≤ 50 000），是已知夫妻/伴侣的对数；随后 N 行，每行给出一对夫妻/伴侣——为方便起见，每人对应一个 ID 号，为 5 位数字（从 00000 到 99999），ID 间以空格分隔；之后给出一个正整数 M（≤ 10 000），为参加派对的总人数；随后一行给出这 M 位客人的 ID，以空格分隔。题目保证无人重婚或脚踩两条船。
+
+#### 输出格式：
+首先第一行输出落单客人的总人数；随后第二行按 ID 递增顺序列出落单的客人。ID 间用 1 个空格分隔，行的首尾不得有多余空格。
+
+#### 输入样例：
+3
+11111 22222
+33333 44444
+55555 66666
+7
+55555 44444 10000 88888 22222 11111 23333
+
+#### 输出样例：
+5
+10000 23333 44444 55555 88888
+
+
+```cpp
+#include <iostream>
+#include <map>
+#include <string>
+using namespace std;
+
+int main() {
+  int N; cin >> N;
+  map<string, string> pairs;
+  for (int i = 0; i < N; i++) {
+    string id_a, id_b; cin >> id_a >> id_b;       // why? char*不可以
+    pairs[id_a] = id_b;
+    pairs[id_b] = id_a;
+  }
+
+  int M; cin >> M;
+  map<string, int> mp;
+  for (int i = 0; i < M; i++) {
+    string id_tmp; cin >> id_tmp;
+
+    if (pairs.count(id_tmp)) {
+      auto it = mp.find(pairs[id_tmp]);
+      if (it != mp.end()) {
+        mp.erase(it);
+      } else {
+        mp[id_tmp] = 1;
+      }
+    } else {
+      mp[id_tmp] = 1;
+    }
+  }
+
+  cout << mp.size() << endl;
+  for (auto it = mp.begin(); it != mp.end(); it++) {
+    if (it != mp.begin()) cout << " ";
+    cout << it->first;
+  }
+  return 0;
+}
+```
+
+### 1068. 万绿丛中一点红(20)
+
+对于计算机而言，颜色不过是像素点对应的一个 24 位的数值。现给定一幅分辨率为 M×N 的画，要求你找出万绿丛中的一点红，即有独一无二颜色的那个像素点，并且该点的颜色与其周围 8 个相邻像素的颜色差充分大。
+
+#### 输入格式：
+
+输入第一行给出三个正整数，分别是 M 和 N（≤ 1000），即图像的分辨率；以及 TOL，是所求像素点与相邻点的颜色差阈值，色差超过 TOL 的点才被考虑。随后 N 行，每行给出 M 个像素的颜色值，范围在 [0,2^24​​) 内。所有同行数字间用空格或 TAB 分开。
+
+#### 输出格式：
+
+在一行中按照 (x, y): color 的格式输出所求像素点的位置以及颜色值，其中位置 x 和 y 分别是该像素在图像矩阵中的列、行编号（从 1 开始编号）。如果这样的点不唯一，则输出 Not Unique；如果这样的点不存在，则输出 Not Exist。
+
+#### 输入样例 1：
+
+8 6 200
+0 	 0 	  0 	   0	    0 	     0 	      0        0
+65280 	 65280    65280    16711479 65280    65280    65280    65280
+16711479 65280    65280    65280    16711680 65280    65280    65280
+65280 	 65280    65280    65280    65280    65280    165280   165280
+65280 	 65280 	  16777015 65280    65280    165280   65480    165280
+16777215 16777215 16777215 16777215 16777215 16777215 16777215 16777215
+
+#### 输出样例 1：
+(5, 3): 16711680
+
+#### 输入样例 2：
+4 5 2
+0 0 0 0
+0 0 3 0
+0 0 0 0
+0 5 0 0
+0 0 0 0
+
+#### 输出样例 2：
+Not Unique
+
+#### 输入样例 3：
+3 3 5
+1 2 3
+3 4 5
+5 6 7
+
+#### 输出样例 3：
+Not Exist
+
+#### Solution:
+
+```cpp
+debug:
+
+Error1:
+4 5 2
+0 0 0 0
+0 0 3 0
+0 0 0 0
+0 5 0 0
+0 0 0 0
+(3, 2): 3
+
+// 充分大并不意味着最大..
+
+
+3 3 5
+1 2 3
+3 4 5
+5 6 7
+Not Unique
+*/
+
+
+// case5
+/*
+1 1 2
+2
+*/
+
+
+#include <cstdio>
+#include <cmath>
+#include <vector>
+#include <cstring>
+using namespace std;
+struct Node {
+  int x;
+  int y;
+  int color;
+  int cnt;
+};   // bug01
+
+const int MAXN = 16777300;     // pow(2, 24) + 50;  // bug02
+const int MAXM = 1100;
+Node dup_color[MAXN];
+int a[MAXM][MAXM];
+
+int grid[9][3] = {{-1, -1}, {-1, 0}, {-1, 1},        // bug03, 不能定义成move
+                  {0 , -1},          {0, 1},
+                  {1,  -1}, {1 , 0}, {1, 1}};
+
+void test_printf_show(vector<Node> v) {
+  for (int i = 0; i < v.size(); i++) {
+    printf("x = %d, y = %d, color = %d\n", v[i].x, v[i].y, v[i].color);
+  }
+  printf("\n");
+}
+
+int main() {
+  int M, N, TOL;
+  scanf("%d %d %d", &M, &N, &TOL);
+  // memset(dup_color, 0, sizeof(dup_color));  // memset导致空间不足case1,2,3..
+  // memset(a, 0, sizeof(a));
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < M; j++) {
+      int id; scanf("%d", &id);
+      a[i][j] = id;
+      if (dup_color[id].cnt == 0) {
+        dup_color[id].color = id;
+        dup_color[id].x = i; dup_color[id].y = j;
+      }
+      dup_color[id].cnt++;
+    }
+  }
+  if (M == 1 && N == 1) {
+    printf("(1, 1): %d\n", a[0][0]);
+    return 0;
+  }
+  vector<Node> v; vector<Node> max_v;
+  for (int i = 0; i < MAXN; i++) {
+    if (dup_color[i].cnt == 1) {
+      v.push_back(dup_color[i]);
+    }
+  }
+// test_printf_show(v);
+  int max_d = 0;
+  for (int iv = 0; iv < v.size(); iv++) {
+    int i = v[iv].x, j = v[iv].y, color = v[iv].color;   // 难道是色彩均超过TOL?
+    int delta = 0, ok = 1;
+    for (int k = 0; k < 8; k++) {
+      int x = i + grid[k][0], y = j + grid[k][1];
+      if (0 <= x && x < M && 0 <= y && y < N) {
+        int color_b = a[x][y];
+// printf("delta = %d\n", abs(color_b-color));
+        int dd = abs(color_b-color);
+        if (dd > TOL) {                                  // 单个超过TOL
+          delta += dd;                          // bug03:充分大,不是最大
+        } else {
+          ok = 0;
+        }
+      }
+    }
+// printf("\n");
+    if (ok && delta != 0) {        // to?
+// printf("delta total = %d\n", delta);
+      max_v.push_back(v[iv]);
+    }
+    // if (delta > max_d) {
+    //   max_d = delta; max_v.clear(); max_v.push_back(v[iv]);
+    // } else if (delta == max_d) {
+    //   max_v.push_back(v[iv]);
+  }
+// test_printf_show(max_v);
+  if (max_v.size() == 1) {
+    // printf("(%d, %d): %d\n", max_v[0].x+1, max_v[0].y+1, max_v[0].color);
+    printf("(%d, %d): %d\n", max_v[0].y+1, max_v[0].x+1, max_v[0].color);
+  } else if (max_v.size() == 0) {
+    printf("Not Exist\n");
+  } else {
+    printf("Not Unique\n");
+  }
   return 0;
 }
 ```
