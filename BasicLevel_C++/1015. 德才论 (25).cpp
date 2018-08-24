@@ -20,6 +20,57 @@ H（<100），为优先录取线——德分和才分均不低于此线的被定
 
 输出第1行首先给出达到最低分数线的考生人数M，随后M行，每行按照输入格式输出一位考生的信息，考生按输入中说明的规则从高到低排序。当某类考生中有多人总分相同时，按其德分降序排列；若德分也并列，则按准考证号的升序输出。
 */
+
+#include <cstdio>
+#include <algorithm>
+#include <cstring>
+using namespace std;
+
+struct Node {
+  char id[10];
+  int dei, cai, score, rank;
+};
+const int MAXN = 100050;
+Node nodes[MAXN];
+
+bool cmp(Node n1, Node n2) {
+  if (n1.rank != n2.rank) return n1.rank < n2.rank;
+  if (n1.score != n2.score) return n1.score > n2.score;
+  if (n1.dei != n2.dei) return n1.dei > n2.dei;
+  return strcmp(n1.id, n2.id) < 0;
+}
+
+int main() {
+  int N, L, H;
+  scanf("%d %d %d", &N, &L, &H);
+  int cnt = 0;
+  for (int i = 0; i < N; i++) {
+    char id[10]; int dei, cai;
+    scanf("%s %d %d", id, &dei, &cai);
+    if (dei >= L && cai >= L) {
+      int rank;
+      if (cai >= H && dei >= H) rank = 1;
+      else if (dei >= H && cai < H) rank = 2;
+      else if (dei < H && cai < H && dei >= cai) rank = 3;
+      else rank = 4;
+      sscanf(id, "%s", nodes[cnt].id);   // why?
+      // nodes[cnt].id = id;
+      nodes[cnt].dei = dei;  nodes[cnt].cai = cai;
+      nodes[cnt].score = dei + cai;
+      nodes[cnt].rank = rank; cnt++;
+    }
+  }
+  sort(nodes, nodes+cnt, cmp);
+  printf("%d\n", cnt);
+  for (int i = 0; i < cnt; i++) {
+    if (i) printf("\n");
+    printf("%s %d %d", nodes[i].id, nodes[i].dei,
+           nodes[i].cai);
+  }
+  return 0;
+}
+
+/*
 #include <cstdio>
 #include <iostream>
 #include <vector>
@@ -99,6 +150,8 @@ int main() {
 
   return 0;
 }
+
+*/
 
 /*
 14 60 80
