@@ -191,3 +191,62 @@ void quickSort(int A[], int left, int right) {
   }
 }
 ```
+
+
+## 5.2 最大公约数与最小公倍数
+
+### 5.2.1 最大公约数
+
+```cpp
+// 循环的写法
+int gcd(int a, int b) {
+  while (b != 0) {
+    int tmp = a; a = b; b = tmp % b;
+  }
+  return a;
+}
+```
+
+
+```cpp
+// 递归的写法
+int gcd(int a, int b) {
+  return !b ? a : gcd(b, a % b);
+}
+```
+
+### 5.2.2 最小公倍数
+
+a*b / 最大公约数d = 最小公倍数
+
+```cpp
+int gcd(int a, int b) {
+  return !b ? a : gcd(b, a % b);
+}
+
+int lcm(int a, int b) {      // 两数相乘/最大公约数d
+  return a * b / gcd(a, b);
+}
+```
+
+实际写法应该是, 
+```
+a / d * d;    // d是ab的最大公约数, 一定能整除
+```
+
+```
+// 改进后的写法(防止溢出, 更实用)
+int gcd(int a, int b) {
+  return !b ? a : gcd(b, a % b);
+}
+
+int lcm(int a, int b) {
+  return a / gcd(a, b) * b;
+}
+```
+
+测试了一下溢出:
+```cpp
+printf("%d\n", lcm(22223, 23333223));          // -1156828087
+printf("%d\n", lcm_better(2222223, 23223));    // 22359059
+```
