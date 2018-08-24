@@ -1,9 +1,14 @@
 // Copyright [2018] <mituh>
 // 1034. 有理数四则运算(20).cpp
 // 四则运算
+// debug01 运算后没有reduction
+// debug02 整数部分存在, 小数部分整数为0的情况, 打印错误, abs引用
+// debug03 约分时, 若为复数, 分母为正, 分子为负
+// debug04 (-1 -1/3) 最简形式是应写成(-1 1/3)
+// debug05 整数部分为0
 #include <cstdio>
 #include <cmath>
-using namespace std;
+
 struct Fraction {
   // Fraction(int a, int b) {
   //   up = a; down = b;
@@ -16,43 +21,52 @@ int gcd(int a, int b) {
   return !b ? a : gcd(b, a % b);
 }
 
-int rabs(int &a) {
+int rabs(int a) {
   return a = a < 0 ? -a : a;
 }
 
 void reduction(Fraction &f) {
   if (f.down == 0) return;
-  if (f.up / f.down < 0) {
+  // printf("f.up = %d, f.down = %d, %d\n", f.up, f.down, f.up/f.down);
+  // if (f.up / f.down < 0) {
+  if ((f.up < 0 && f.down > 0) ||
+      (f.down < 0 && f.up > 0)) {    // debug05
     f.up = -rabs(f.up); f.down = rabs(f.down);
+    // printf("--  %d %d\n", f.up, f.down);
   } else if (f.up == 0) {
     f.down = 1;
   }
 
-  int g = gcd(f.up, f.down);
+  int g = gcd(rabs(f.up), f.down);           // debug03
   f.up /= g; f.down /= g;
 }
 
 Fraction add(Fraction f1, Fraction f2) {
   Fraction nf(f1.up*f2.down + f2.up*f1.down,
               f1.down*f2.down);
+  reduction(nf);                            // debug01
+// printf("%d %d\n", nf.up, nf.down);
   return nf;
 }
 
 Fraction minus(Fraction f1, Fraction f2) {
   Fraction nf(f1.up * f2.down - f2.up * f1.down,
               f1.down * f2.down);
+  reduction(nf);
   return nf;
 }
 
 Fraction multi(Fraction f1, Fraction f2) {
   Fraction nf(f1.up * f2.up,
               f1.down * f2.down);
+  reduction(nf);
   return nf;
 }
 
 Fraction divide(Fraction f1, Fraction f2) {
   Fraction nf(f1.up * f2.down,
               f2.up * f1.down);
+  reduction(nf);
   return nf;
 }
 
@@ -64,16 +78,23 @@ void print_fraction(Fraction f_rst) {
       printf("0"); return;
     }
     if (rabs(f_rst.up) >= f_rst.down) {
-      int a = rabs(f_rst.up) / f_rst.down;
-      int b = rabs(f_rst.up) - f_rst.down * a;
+      int a = f_rst.up / f_rst.down;                      // debug02
+      int b = rabs(f_rst.up - f_rst.down * a);            // debug04
       if (f_rst.up < 0) {
-        printf("(-%d %d/%d)", a, b, f_rst.down);
+        printf("(%d", a);
+        if (b != 0) {
+          printf(" %d/%d", b, f_rst.down);
+        }
+        printf(")");
       } else {
-        printf("%d %d/%d", a, b, f_rst.down);
+        printf("%d", a);
+        if (b != 0) {
+          printf(" %d/%d", b, f_rst.down);
+        }
       }
     } else {
       if (f_rst.up < 0) {
-        printf("(-%d/%d)", f_rst.up, f_rst.down);
+        printf("(%d/%d)", f_rst.up, f_rst.down);
       } else {
         printf("%d/%d", f_rst.up, f_rst.down);
       }
@@ -93,11 +114,14 @@ int main() {
   int up1, down1, up2, down2;
   sscanf(str1, "%d/%d", &up1, &down1);
   sscanf(str2, "%d/%d", &up2, &down2);
+// printf("%d %d %d %d\n", up1, down1, up2, down2);
   Fraction f1(up1, down1), f2(up2, down2);
+  Fraction nf = divide(f1, f2);
+  // printf("nf: %d %d\n", nf.up, nf.down);
   print_f1f2(f1, '+', f2); print_fraction(add(f1, f2));     printf("\n");
   print_f1f2(f1, '-', f2); print_fraction(minus(f1, f2));   printf("\n");
   print_f1f2(f1, '*', f2); print_fraction(multi(f1, f2));   printf("\n");
-  print_f1f2(f1, '/', f2); print_fraction(divide(f1, f2));  printf("\n");
+  print_f1f2(f1, '/', f2); print_fraction(nf);  printf("\n");
   return 0;
 }
 
