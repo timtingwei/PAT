@@ -711,3 +711,59 @@ int main() {
   return 0;
 }
 ```
+
+
+### 1015 德才论(25)
+
+多加一个rank变量排序
+
+```cpp
+#include <cstdio>
+#include <algorithm>
+#include <cstring>
+using namespace std;
+
+struct Node {
+  char id[10];
+  int dei, cai, score, rank;
+};
+const int MAXN = 100050;
+Node nodes[MAXN];
+
+bool cmp(Node n1, Node n2) {
+  if (n1.rank != n2.rank) return n1.rank < n2.rank;
+  if (n1.score != n2.score) return n1.score > n2.score;
+  if (n1.dei != n2.dei) return n1.dei > n2.dei;
+  return strcmp(n1.id, n2.id) < 0;
+}
+
+int main() {
+  int N, L, H;
+  scanf("%d %d %d", &N, &L, &H);
+  int cnt = 0;
+  for (int i = 0; i < N; i++) {
+    char id[10]; int dei, cai;
+    scanf("%s %d %d", id, &dei, &cai);
+    if (dei >= L && cai >= L) {
+      int rank;
+      if (cai >= H && dei >= H) rank = 1;
+      else if (dei >= H && cai < H) rank = 2;
+      else if (dei < H && cai < H && dei >= cai) rank = 3;
+      else rank = 4;
+      sscanf(id, "%s", nodes[cnt].id);   // why?
+      // nodes[cnt].id = id;
+      nodes[cnt].dei = dei;  nodes[cnt].cai = cai;
+      nodes[cnt].score = dei + cai;
+      nodes[cnt].rank = rank; cnt++;
+    }
+  }
+  sort(nodes, nodes+cnt, cmp);
+  printf("%d\n", cnt);
+  for (int i = 0; i < cnt; i++) {
+    if (i) printf("\n");
+    printf("%s %d %d", nodes[i].id, nodes[i].dei,
+           nodes[i].cai);
+  }
+  return 0;
+}
+```
