@@ -6,6 +6,7 @@
 // debug03 约分时, 若为复数, 分母为正, 分子为负
 // debug04 (-1 -1/3) 最简形式是应写成(-1 1/3)
 // debug05 整数部分为0
+// debug06 结果为双负数的情况
 #include <cstdio>
 #include <cmath>
 
@@ -18,11 +19,12 @@ struct Fraction {
 };
 
 int gcd(int a, int b) {
+// printf("gcd: a = %d, b = %d\n", a, b);
   return !b ? a : gcd(b, a % b);
 }
 
 int rabs(int a) {
-  return a = a < 0 ? -a : a;
+  return a < 0 ? -a : a;
 }
 
 void reduction(Fraction &f) {
@@ -33,11 +35,14 @@ void reduction(Fraction &f) {
       (f.down < 0 && f.up > 0)) {    // debug05
     f.up = -rabs(f.up); f.down = rabs(f.down);
     // printf("--  %d %d\n", f.up, f.down);
+  } else if (f.up < 0 && f.down < 0) {            // debug06
+    f.up = -f.up; f.down = -f.down;
   } else if (f.up == 0) {
     f.down = 1;
   }
 
   int g = gcd(rabs(f.up), f.down);           // debug03
+  // printf("\nf.down = %d, g = %d\n", f.down, g);
   f.up /= g; f.down /= g;
 }
 
@@ -66,6 +71,7 @@ Fraction multi(Fraction f1, Fraction f2) {
 Fraction divide(Fraction f1, Fraction f2) {
   Fraction nf(f1.up * f2.down,
               f2.up * f1.down);
+  // printf("%d %d\n", nf.up, nf.down);
   reduction(nf);
   return nf;
 }
@@ -79,6 +85,7 @@ void print_fraction(Fraction f_rst) {
     }
     if (rabs(f_rst.up) >= f_rst.down) {
       int a = f_rst.up / f_rst.down;                      // debug02
+      // printf("a = %d\n", a);
       int b = rabs(f_rst.up - f_rst.down * a);            // debug04
       if (f_rst.up < 0) {
         printf("(%d", a);
@@ -124,4 +131,13 @@ int main() {
   print_f1f2(f1, '/', f2); print_fraction(nf);  printf("\n");
   return 0;
 }
+
+
+/*
+-3/2 -4/3
+(-1 1/2) + (-1 1/3) = (-2 5/6)
+(-1 1/2) - (-1 1/3) = (-1/6)
+(-1 1/2) * (-1 1/3) = 2
+(-1 1/2) / (-1 1/3) = (1 1/-8)
+*/
 
