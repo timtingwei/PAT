@@ -19,6 +19,6 @@ int gcd(int a, int b) {
 }
 
 int main() {
-  printf("%d\n", gcd(26, 39));
+  printf("%d\n", gcd(2, 3));
   return 0;
 }
