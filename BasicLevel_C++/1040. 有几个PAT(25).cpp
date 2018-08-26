@@ -20,6 +20,7 @@ APPAPT
 2
 */
 
+/*
 #include <cstdio>
 #include <iostream>
 #include <string>
@@ -47,3 +48,33 @@ int main() {
 
 // 1,2AC, 后三个超时, 15分
 // 如何解决3sum问题?
+
+*/
+
+// 计算每个A左边有几个P, 右边有几个T, 相乘
+
+#include <cstdio>
+#include <string>
+using namespace std;
+
+int main() {
+  string s; cin >> s;
+  int sum = 0, n = s.length();
+  for (int i = 0; i < n; i++) {
+    if (s[i] == 'A') {
+      int left_P = 0, right_T = 0;
+      int p = i-1, q = i+1;
+      while (p >= 0) {
+        if (s[p] == 'P') left_P++;
+        p++;
+      }
+      while (q < n) {
+        if (s[q] == 'T') right_T++;
+        q++;
+      }
+      sum += left_P * right_T;
+    }
+  }
+  printf("%d\n", sum);
+  return 0;
+}
