@@ -23,7 +23,7 @@ int main() {
     Quetion q;
     scanf("%d %d %d %d", &q.score, &q.opt_num, &q.ans_num);
     for (int ans_i = 0; ans_i < q.ans_num; ans_i++) {
-      scanf("%c", &q.ans[i]);
+      scanf("%c", &q.ans[ans_i]);
     }
     v.push_back(q);
   }
