@@ -713,337 +713,6 @@ int main() {
 ```
 
 
-### 1015 德才论(25)
-
-多加一个rank变量排序
-
-```cpp
-#include <cstdio>
-#include <algorithm>
-#include <cstring>
-using namespace std;
-
-struct Node {
-  char id[10];
-  int dei, cai, score, rank;
-};
-const int MAXN = 100050;
-Node nodes[MAXN];
-
-bool cmp(Node n1, Node n2) {
-  if (n1.rank != n2.rank) return n1.rank < n2.rank;
-  if (n1.score != n2.score) return n1.score > n2.score;
-  if (n1.dei != n2.dei) return n1.dei > n2.dei;
-  return strcmp(n1.id, n2.id) < 0;
-}
-
-int main() {
-  int N, L, H;
-  scanf("%d %d %d", &N, &L, &H);
-  int cnt = 0;
-  for (int i = 0; i < N; i++) {
-    char id[10]; int dei, cai;
-    scanf("%s %d %d", id, &dei, &cai);
-    if (dei >= L && cai >= L) {
-      int rank;
-      if (cai >= H && dei >= H) rank = 1;
-      else if (dei >= H && cai < H) rank = 2;
-      else if (dei < H && cai < H && dei >= cai) rank = 3;
-      else rank = 4;
-      sscanf(id, "%s", nodes[cnt].id);   // why?
-      // nodes[cnt].id = id;
-      nodes[cnt].dei = dei;  nodes[cnt].cai = cai;
-      nodes[cnt].score = dei + cai;
-      nodes[cnt].rank = rank; cnt++;
-    }
-  }
-  sort(nodes, nodes+cnt, cmp);
-  printf("%d\n", cnt);
-  for (int i = 0; i < cnt; i++) {
-    if (i) printf("\n");
-    printf("%s %d %d", nodes[i].id, nodes[i].dei,
-           nodes[i].cai);
-  }
-  return 0;
-}
-```
-
-
-### 1056 组合数的和(15)
-tags: [组合, 算法, PAT]
-给定 N 个非 0 的个位数字，用其中任意 2 个数字都可以组合成 1 个 2 位的数字。要求所有可能组合出来的 2 位数字的和。例如给定 2、5、8，则可以组合出：25、28、52、58、82、85，它们的和为330。
-
-#### 输入格式：
-输入在第一行中给出 N（1 < N < 10），随后一行给出 N 个不同的非 0 个位数字。数字间以空格分隔。
-
-#### 输出格式：
-输出所有可能组合出来的2位数字的和。
-
-#### 输入样例：
-3
-2 8 5
-
-#### 输出样例：
-330
-
-#### Solution:
-
-```cpp
-#include <cstdio>
-
-int a[15];
-int main() {
-  int N; scanf("%d", &N);
-  int sum = 0;
-  for (int i = 0; i < N; i++) {scanf("%d", &a[i]);}
-
-  for (int i = 0; i < N; i++) {
-    for (int j = 0; j < N; j++) {
-      if (i == j) continue;
-      sum +=  10*a[i] + a[j];
-    }
-  }
-  printf("%d", sum);
-  return 0;
-}
-```
-
-
-### 1074 宇宙无敌加法器(20)
-tags:[进制转换, PAT, 算法]
-
-地球人习惯使用十进制数，并且默认一个数字的每一位都是十进制的。而在 PAT 星人开挂的世界里，每个数字的每一位都是不同进制的，这种神奇的数字称为“PAT数”。每个 PAT 星人都必须熟记各位数字的进制表，例如“……0527”就表示最低位是 7 进制数、第 2 位是 2 进制数、第 3 位是 5 进制数、第 4 位是 10 进制数，等等。每一位的进制 d 或者是 0（表示十进制）、或者是 [2，9] 区间内的整数。理论上这个进制表应该包含无穷多位数字，但从实际应用出发，PAT 星人通常只需要记住前 20 位就够用了，以后各位默认为 10 进制。
-
-在这样的数字系统中，即使是简单的加法运算也变得不简单。例如对应进制表“0527”，该如何计算“6203 + 415”呢？我们得首先计算最低位：3 + 5 = 8；因为最低位是 7 进制的，所以我们得到 1 和 1 个进位。第 2 位是：0 + 1 + 1（进位）= 2；因为此位是 2 进制的，所以我们得到 0 和 1 个进位。第 3 位是：2 + 4 + 1（进位）= 7；因为此位是 5 进制的，所以我们得到 2 和 1 个进位。第 4 位是：6 + 1（进位）= 7；因为此位是 10 进制的，所以我们就得到 7。最后我们得到：6203 + 415 = 7201。
-
-#### 输入格式：
-输入首先在第一行给出一个 N 位的进制表（0 < N ≤ 20），以回车结束。 随后两行，每行给出一个不超过 N 位的非负的 PAT 数。
-
-#### 输出格式：
-在一行中输出两个 PAT 数之和。
-
-#### 输入样例：
-30527
-06203
-415
-
-#### 输出样例：
-7201
-#### Solution:
-每次循环继承上一次循环的进位, 进行加法运算, 再求余。
-
-利用栈, 先对后出的特性, 对从右向左计算出的答案打印。
-要注意的是, 
-> * 1, 需要把栈中最前的0给去掉
-> * 2, 还要debug结果位0的情况, case5
-> * 3, 实际上最后一位(最左)仍然需要进位, 需要在循环外进行判断, case1, 3
-
-如下:
-```sh
-// 1, 3wrong
-2
-5
-7
-0
-```
-
-``` sh
-// 5, wrong
-2
-0
-0
-
-```
-
-
-实际代码如下:
-```cpp
-#include <iostream>
-#include <string>
-#include <stack>
-using namespace std;
-
-int main() {
-
-  string T, S1, S2; cin >> T >> S1 >> S2;
-  int n = T.length();
-  S1.insert(0, n - S1.length(), '0');
-  S2.insert(0, n - S2.length(), '0');
-  stack<int> stk; int more = 0;
-
-  for (int i = n-1; i >= 0; i--) {
-    int b = T[i] == '0' ? 10 : T[i] - '0';
-    int d  = S1[i]-'0' + S2[i]-'0' + more;
-    int digit = (d) ? (d) % b : 0;
-    more = d / b;
-    stk.push(digit);
-  }
-  if (more) stk.push(more);           // case1, 3
-  int flag = 0, flag_z = 1;
-  while (!stk.empty()) {
-    if (!flag) {
-      if (stk.top() == 0) {
-        stk.pop();
-      } else {
-        flag = 1;
-        flag_z = 0;                   // case5, zero
-      }
-    } else {
-      printf("%d", stk.top());
-      stk.pop();
-    }
-  }
-  if (flag_z) printf("0");
-  printf("\n");
-  return 0;
-}
-```
-    
-
-### 1044. 火星数字(20)
-tags: 进制转换, map, 字符串
-火星人是以 13 进制计数的：
-
-地球人的 0 被火星人称为 tret。
-地球人数字 1 到 12 的火星文分别为：jan, feb, mar, apr, may, jun, jly, aug, sep, oct, nov, dec。
-火星人将进位以后的 12 个高位数字分别称为：tam, hel, maa, huh, tou, kes, hei, elo, syy, lok, mer, jou。
-例如地球人的数字 29 翻译成火星文就是 hel mar；而火星文 elo nov 对应地球数字 115。为了方便交流，请你编写程序实现地球和火星数字之间的互译。
-
-#### 输入格式：
-输入第一行给出一个正整数 N（<100），随后 N 行，每行给出一个 [0, 169) 区间内的数字 —— 或者是地球文，或者是火星文。
-
-#### 输出格式：
-对应输入的每一行，在一行中输出翻译后的另一种语言的数字。
-
-#### 输入样例：
-4
-29
-5
-elo nov
-tam
-
-#### 输出样例：
-hel mar
-may
-115
-13
-
-
-#### Solution:
-
-
-先判断读入的string字符串, 首位是否为数字, 来决定是哪种转译方法.
-
-low, high建立成数组, 用数组建立map散列, 可用于英文和数字之间的转换.
-对于有两个英文的火星文, 需要用find在string找到" "字符串, 然后分别转译, 按照进制进行转换.
-
-坑点:
-> * 1, 01问题, 低位tret的是可以作为0的, 高位0是tam, 实际上是1, 相应需要减1
-> * 2, 如果是13的话, 低位是0, 转译后不被翻译。case2, 4
-> * 3, 逻辑一定会有疏漏, 要学着自己写测试案例, 如下:
-写测试函数的技巧
-```cpp
-/*
-8
-0
-12
-13
-26
-27
-tret
-jan
-hel jan
-*/
-
-/*
-tret
-dec
-tam
-hel
-hel jan
-0
-1
-27
-*/
-
-/*
-tret
-dec
-tam tret
-hel tret
-hel jan
-0
-1
-27
-*/
-```
-
-
-实际代码如下:
-```cpp
-#include <iostream>
-#include <string>
-#include <map>
-using namespace std;
-
-
-map<string, int> mp_low;
-map<string, int> mp_high;
-
-int main() {
-  int N; cin >> N;
-  string low[] = {"tret", "jan", "feb", "mar", "apr", "may",
-                  "jun", "jly", "aug", "sep", "oct", "nov", "dec"};
-  string high[] = {"tam", "hel", "maa", "huh", "tou", "kes",
-                   "hei", "elo", "syy", "lok", "mer", "jou"};  // a-1
-  for (int i = 0; i < 13; i++) {
-    mp_low[low[i]] = i;
-  }
-  for (int i = 1; i < 13; i++) {
-    mp_high[high[i-1]] = i;
-  }
-
-  string s;
-  getchar();
-  while (N--) {
-    getline(cin, s);
-    if (isdigit(s[0])) {
-      int a = stoi(s) / 13, b = stoi(s) % 13;
-      if (a == 0) {
-        cout << low[b] << endl;
-      } else {
-        cout << high[a-1];
-        if (b != 0) {             // case2, 4
-          cout << " " << low[b];
-        }
-        cout << endl;
-      }
-    } else {
-      int pos = s.find(" ");
-      int ans;
-      if (pos != string::npos) {
-        string s1 = s.substr(0, 3), s2 = s.substr(pos+1, 3);
-        ans = mp_high[s1] * 13 + mp_low[s2];
-      } else {
-        // ans = mp_low[s];    // eror
-        auto it_low = mp_low.find(s);
-        if (it_low != mp_low.end()) {
-          ans = mp_low[s];
-        } else {
-          ans = mp_high[s] * 13;
-        }
-      }
-      cout << ans << endl;
-    }
-  }
-  return 0;
-}
-
-// case 2, 4 wrong answer;
-```
-
-
-
 ### 1040 有几个PAT(25)
 
 字符串 APPAPT 中包含了两个单词 PAT，其中第一个 PAT 是第 2 位(P)，第 4 位(A)，第 6 位(T)；第二个 PAT 是第 3 位(P)，第 4 位(A)，第 6 位(T)。
@@ -1167,3 +836,150 @@ int main() {
 }
 ```
 
+
+
+### 1069 微博转发抽奖(20)
+1069. 微博转发抽奖(20)
+小明 PAT 考了满分，高兴之余决定发起微博转发抽奖活动，从转发的网友中按顺序每隔 N 个人就发出一个红包。请你编写程序帮助他确定中奖名单。
+
+#### 输入格式：
+输入第一行给出三个正整数 M（≤ 1000）、N 和 S，分别是转发的总量、小明决定的中奖间隔、以及第一位中奖者的序号（编号从 1 开始）。随后 M 行，顺序给出转发微博的网友的昵称（不超过 20 个字符、不包含空格回车的非空字符串）。
+
+注意：可能有人转发多次，但不能中奖多次。所以如果处于当前中奖位置的网友已经中过奖，则跳过他顺次取下一位。
+
+#### 输出格式：
+按照输入的顺序输出中奖名单，每个昵称占一行。如果没有人中奖，则输出 Keep going...。
+
+#### 输入样例 1：
+9 3 2
+Imgonnawin!
+PickMe
+PickMeMeMeee
+LookHere
+Imgonnawin!
+TryAgainAgain
+TryAgainAgain
+Imgonnawin!
+TryAgainAgain
+
+#### 输出样例 1：
+PickMe
+Imgonnawin!
+TryAgainAgain
+
+#### 输入样例 2：
+2 3 5
+Imgonnawin!
+PickMe
+
+#### 输出样例 2：
+Keep going...
+
+
+#### Solution:
+
+注意需要先进行一次统一读入, 不能跳着读。
+重复用map来判断, 用一个keep变量01来判断是否有中奖的同学.
+
+```cpp
+#include <iostream>
+#include <string>
+#include <map>
+#include <vector>
+using namespace std;
+
+map<string, int> mp;
+vector<string> v;
+int main() {
+  int M, N, S; cin >> M >> N >> S;
+  int keep = 1;
+  getchar();
+  // debug, 读入问题
+  for (int i = 0; i < M; i++) {
+    string tmp_s; getline(cin, tmp_s);
+    v.push_back(tmp_s);
+  }
+  for (int i = 0; i < M; i++) {
+    if (i == S-1) {
+      keep = 0;
+      cout << v[i] << endl;
+      mp[v[i]] = 1;
+      int j = i + N;
+      while (j <= M-1) {
+        auto it = mp.find(v[j]);
+        if (it != mp.end()) {
+          j = j+1;
+        } else {
+          cout << v[j] << endl;
+          mp[v[j]] = 1;
+          j = j+N;
+        }
+      }
+      break;
+    }
+  }
+  if (keep) {
+    cout << "Keep going..." << endl;
+  }
+  return 0;
+}
+```
+
+
+### 1070 结绳(25)
+tags, [PAT, 算法, 贪心, 规律]
+
+给定一段一段的绳子，你需要把它们串成一条绳。每次串连的时候，是把两段绳子对折，再如下图所示套接在一起。这样得到的绳子又被当成是另一段绳子，可以再次对折去跟另一段绳子串连。每次串连后，原来两段绳子的长度就会减半。
+
+rope.jpg
+
+给定 N 段绳子的长度，你需要找出它们能串成的绳子的最大长度。
+
+#### 输入格式：
+每个输入包含 1 个测试用例。每个测试用例第 1 行给出正整数 N (2≤N≤10^4)；第 2 行给出 N 个正整数，即原始绳段的长度，数字间以空格分隔。所有整数都不超过10^4。
+
+#### 输出格式：
+在一行中输出能够串成的绳子的最大长度。结果向下取整，即取为不超过最大长度的最近整数。
+
+#### 输入样例：
+8
+10 15 12 3 4 13 1 15
+
+#### 输出样例：
+14
+
+#### Solution:
+主要要弄明白一个问题, 绳子怎么拼能够获得最大长度。
+
+</span style="color:red">使得长度越长的绳子, 被折叠的次数越少; 尽可能让长度短的绳子折叠的更多(既然一定需要折叠的话).<span>
+
+由于不会在数学上进行证明, 就先写完算法, 然后跟案例数据去匹配验证。
+
+```cpp
+#include <cstdio>
+#include <cmath>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+const int MAXN = 10050;
+int a[MAXN];
+
+int main() {
+  int N, tmp; scanf("%d", &N);
+
+  for (int i = 0; i < N; i++) {
+    scanf("%d", &tmp);
+    a[i] = tmp;
+  }
+  sort(a, a+N);
+  double sum = a[0];
+  for (int i = 1; i < N; i++) {
+    sum = (sum + a[i]) / 2;
+  }
+  printf("%d\n", (int)floor(sum));
+  // printf("sum = %lf", sum);
+  return 0;
+}
+```
