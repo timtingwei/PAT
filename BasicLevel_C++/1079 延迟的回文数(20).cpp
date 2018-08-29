@@ -117,6 +117,7 @@ int main() {
 Not found in 10 iterations.
 */
 
+/*
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -164,3 +165,96 @@ int main() {
   return 0;
 }
 
+*/
+
+
+#include <cstring>
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+struct Bign {
+  int d[1005];
+  int len;
+  Bign() {
+    memset(d, 0, sizeof(d));
+    len = 0;
+  }
+};
+
+Bign change(string str) {
+  Bign a;
+  a.len = str.length();
+  for (int i = 0; i < a.len; i++) {
+    a.d[i] = str[a.len-1-i] - '0';
+  }
+  return a;
+}
+
+Bign add(Bign a, Bign b) {
+  Bign c;
+  int carry = 0;
+  for (int i = 0; i < a.len || i < b.len; i++) {
+    int temp = a.d[i] + b.d[i] + carry;
+    c.d[c.len++] = temp % 10;
+    carry = temp / 10;
+  }
+  if (carry) {
+    c.d[c.len++] = carry;
+  }
+  return c;
+}
+
+string bignToString(Bign a) {
+  string s;
+  for (int i = a.len-1; i >= 0; i--) {
+    s += (a.d[i] + '0');
+  }
+  return s;
+}
+
+int is_p(string s) {
+  if (s.length() == 1) return 1;
+  int i = 0, j = s.length() - 1;
+  while (i <= j) {
+    if (s[i] != s[j]) return 0;
+    i++; j--;
+  }
+  return 1;
+}
+
+int main() {
+  string A, B, C;
+  cin >> A;
+  if (is_p(A)) {
+    cout << A << " is a palindromic number." << endl;
+    return 0;
+  }
+  int find = 0, cnt = 0;
+  while (cnt < 10) {
+    string tmp_s = A;
+    reverse(tmp_s.begin(), tmp_s.end());
+    B.clear(); B = tmp_s;
+
+    Bign intc = add(change(A), change(B));
+
+    // int tmp_c = stoi(A) + stoi(B);        // case6, need to convert to bign
+    // C.clear(); C = to_string(tmp_c);
+    C.clear(); C = bignToString(intc);       // debug case6
+
+    cout << A << " + " << B << " = " << C << endl;
+
+    if (is_p(C)) {
+      cout << C << " is a palindromic number." << endl;
+      find = 1;
+      break;
+    }
+    A.clear(); A = C;
+    cnt++;
+  }
+  if (!find) {
+    cout << "Not found in 10 iterations." << endl;
+  }
+  return 0;
+}
