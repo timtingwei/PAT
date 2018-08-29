@@ -1,6 +1,6 @@
 // Copyright [2018] <mituh>
 #include <cstdio>
-#include <ccstring>
+#include <cstring>
 #include <iostream>
 #include <string>
 #include <algorithm>
