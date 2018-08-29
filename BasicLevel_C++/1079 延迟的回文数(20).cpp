@@ -41,6 +41,8 @@ A + B = C
 Not found in 10 iterations.
 
 */
+
+/*
 #include <iostream>
 #include <string>
 using namespace std;
@@ -98,6 +100,7 @@ int main() {
 
   return 0;
 }
+*/
 
 /*
 6666666666666666666667
@@ -113,3 +116,51 @@ int main() {
 7698571184721767867 + 7687671274811758967 = -3060501614176024782
 Not found in 10 iterations.
 */
+
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+int is_p(string s) {
+  if (s.length() == 1) return 1;
+  int i = 0, j = s.length() - 1;
+  while (i <= j) {
+    if (s[i] != s[j]) return 0;
+    i++; j--;
+  }
+  return 1;
+}
+
+int main() {
+  string A, B, C;
+  cin >> A;
+  if (is_p(A)) {
+    cout << A << " is a palindromic number." << endl;
+    return 0;
+  }
+  int find = 0, cnt = 0;
+  while (cnt < 10) {
+    string tmp_s = A;
+    reverse(tmp_s.begin(), tmp_s.end());
+    B.clear(); B = tmp_s;
+
+    int tmp_c = stoi(A) + stoi(B);
+    C.clear(); C = to_string(tmp_c);
+
+    cout << A << " + " << B << " = " << C << endl;
+
+    if (is_p(C)) {
+      cout << C << " is a palindromic number." << endl;
+      find = 1;
+      break;
+    }
+    A.clear(); A = C;
+    cnt++;
+  }
+  if (!find) {
+    cout << "Not found in 10 iterations." << endl;
+  }
+  return 0;
+}
+
