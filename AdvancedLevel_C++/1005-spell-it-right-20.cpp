@@ -2,7 +2,7 @@
 // 1005-spell-it-right-20.cpp   // 11:12 -> 11:27
 
 /*
-1005 Spell It Right(20).cpp
+1005 Spell It Right(20)
 
 Given a non-negative integer N, your task is to compute the sum of all the digits of N, and output every digit of the sum in English.
 
