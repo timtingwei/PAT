@@ -41,9 +41,9 @@ int main() {
             if (v[qi].ans[iv] == s[j+in*2]) ok = 1;
           }
           if (!ok) {
-            error[qi][s[j+in*2-'a']]++;
-            if (error[qi][s[j+in*2-'a']] > max) {
-              max = error[qi][s[j+in*2-'a']];
+            error[qi][s[j+in*2]-'a']++;
+            if (error[qi][s[j+in*2]-'a'] > max) {
+              max = error[qi][s[j+in*2]-'a'];
             }
           } else {
             // add score;
