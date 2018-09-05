@@ -39,6 +39,8 @@ int compare(Bign a, Bign b) {
   }
 }
 
+
+// 两个bign相加
 Bign add(Bign a, Bign b) {
   Bign c;
   int carry = 0;
@@ -52,6 +54,22 @@ Bign add(Bign a, Bign b) {
     c.d[c.len++] = carry;
   }
   return c;
+}
+
+// bign相减
+Bign sub(Bign a, Bign b) {
+  Bign ans;
+  for (int i = 0; i < a.len || i < b.len; i++) {
+    if (a.d[i] < b.d[i]) {
+      a.d[i+1]--;
+      a.d[i] += 10;
+    }
+    ans.d[ans.len++] = a.d[i] - b.d[i];
+  }
+  while (ans.len - 1 >= 1 && ans.d[ans.len-1] == 0) {
+    ans.len--;
+  }
+  return ans;
 }
 
 void show(Bign a) {
@@ -69,6 +87,8 @@ int main() {
   printf("rst = %d\n", compare(aint, bint));
 
   printf("add_rst = "); show(add(aint, bint));
+
+  printf("sub_rst = "); show(sub(aint, bint));
 
   return 0;
 }
