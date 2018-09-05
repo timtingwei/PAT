@@ -43,28 +43,23 @@ Too simple
 */
 
 #include <cstdio>
-#include <cstring>
+#include <vector>
 using namespace std;
 
-const int MAXN = 105;
-
 int main() {
-  int N, M;
-  int temp = 0, full_score[MAXN], right_num[MAXN], opts_num[MAXN],
-      right_opts[MAXN], opts[1005][MAXN], err_cnt[105][6];
+  int temp = 0, right_num = 0, opts_num = 0, opts[1010][110] = {};
   char c;
-  memset(full_score, 0, sizeof(full_score));
-  memset(right_opts, 0, sizeof(right_opts));
-  memset(opts, 0, sizeof(opts));
-  memset(err_cnt, 0, sizeof(err_cnt));
+  int N, M; scanf("%d %d", &N, &M);
+  vector<int> full_score(M), right_opts(M);
+  vector<vector<int> > err_cnt(M);    // 仍要初始化内层
   int hash[] = {1, 2, 4, 8, 16};
-  scanf("%d %d", &N, &M);
   for (int i = 0; i < M; i++) {
-    scanf("%d %d %d", &full_score[i], &opts_num[i], &right_num[i]);
-    for (int j = 0; j < right_num[i]; j++) {
+    scanf("%d %d %d", &full_score[i], &opts_num, &right_num);
+    for (int j = 0; j < right_num; j++) {
       scanf(" %c", &c);
       right_opts[i] += hash[c-'a'];
     }
+    err_cnt[i].resize(5);             // 对应初始化二维vector
   }
 
   for (int i = 0; i < N; i++) {
