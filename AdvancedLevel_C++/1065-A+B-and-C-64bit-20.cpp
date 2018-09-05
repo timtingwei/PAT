@@ -1,7 +1,27 @@
 // Copyright [2018] <mituh>
 // 1065-A+B-and-C-64bit-20.cpp   16:21->16:48(hand)->16:59->17:10 || 20:10(mac)
+/*
+1065 A+B and C (64bit)（20 point(s)）
 
+Given three integers A, B and C in [−2^63,2^63], you are supposed to tell whether A+B>C.
 
+Input Specification:
+The first line of the input gives the positive number of test cases, T (≤10). Then T test cases follow, each consists of a single line containing three integers A, B and C, separated by single spaces.
+
+Output Specification:
+For each test case, output in one line Case #X: true if A+B>C, or Case #X: false otherwise, where X is the case number (starting from 1).
+
+Sample Input:
+3
+1 2 3
+2 3 4
+9223372036854775807 -9223372036854775808 0
+
+Sample Output:
+Case #1: false
+Case #2: true
+Case #3: false
+*/
 #include <iostream>
 #include <cstring>
 #include <string>
@@ -28,7 +48,8 @@ Bign change(string s) {
 Bign add(Bign a, Bign b) {
   Bign ans;
   int carry = 0;
-  for (int i = 0; i < a.len || i < a.len; i++) {
+  // for (int i = 0; i < a.len || i < a.len; i++) {
+  for (int i = 0; i < a.len || i < b.len; i++) {      // case2, debug:01
     int temp = a.d[i] + b.d[i] + carry;
     ans.d[ans.len++] = temp % 10;
     carry = temp / 10;
@@ -119,4 +140,4 @@ int main() {
   return 0;
 }
 
-// case2 wrong error
+// case2 wrong error, 手误
