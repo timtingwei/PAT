@@ -60,9 +60,10 @@ int compare(Bign a, Bign b) {
   else if (a.len > b.len) return 1;
   else {
     for (int i = 0; i < a.len; i++) {
-      if (a.d[i] < b.d[i]) return -1;
-      else if {
-        (a.d[i] > b.d[i]) return 1;
+      if (a.d[i] < b.d[i]) {
+        return -1;
+      } else if (a.d[i] > b.d[i]) {
+        return 1;
       }
     }
     return 0;
@@ -117,3 +118,5 @@ int main() {
   }
   return 0;
 }
+
+// case2 wrong error
