@@ -8,8 +8,12 @@
 |1008   | Elevator(20)              |[查看题解](https://timtingwei.github.io/2018/09/04/20180904-02/)                              | 模拟        |
 |1009   | Product of Polynomials(25)|[查看题解](https://timtingwei.github.io/2018/09/04/20180904-03/)                              | 多项式, 排序, map|
 |1011   | World Cup Betting(20)     |[查看题解](https://timtingwei.github.io/2018/09/04/20180904-04/)                              | 模拟        | 
+|1015   | Reversible Primes(20)     |[查看题解](https://timtingwei.github.io/2018/09/05/20180905-03/)                              | 进制转换, 素数| 
+|1024   | Palindromic Number(25)    |[查看题解](https://timtingwei.github.io/2018/09/05/20180905-04/)                              | 大整数, 字符串| 
 |1025   | PAT Ranking (25)          |[查看题解](https://timtingwei.github.io/2018/08/15/20180815-04/)                              |排序         |
 |1028   | List Sorting (25)         |[查看题解](https://timtingwei.github.io/2018/08/22/20180822-01/)                              | 排序        |
+|1035   | Password(20)              |[查看题解](https://timtingwei.github.io/2018/09/05/20180905-05/)                              |Hash散列, map|
+|1042   | Shuffling Machine(20)     |[查看题解](https://timtingwei.github.io/2018/09/05/20180905-06/)                              |排序, 进制转换, 链表, 模拟|
 |10xx   | next                      | come on                                                                                     | do it     |
 
 # PAT乙级题目题解
@@ -64,6 +68,7 @@
 |1045   | 快速排序(25)                |[查看题解](https://timtingwei.github.io/2018/08/18/20180818-01/)                                      | 快速排序      |
 |1055   | 集体照 (25)                |查看题解                              |  排序, 数列   |
 |1056   | 组合数的和(15)              | [查看题解](https://timtingwei.github.io/2018/08/26/20180826-02/)                                      | 组合 |
+|1058   | 选择题(20)                 | [查看题解](https://timtingwei.github.io/2018/09/05/20180905-02/)                                      | 位运算, 数组 |
 |1062   | 最简分数(20)                | [查看题解](https://timtingwei.github.io/2018/08/23/20180823-05/)                                      | 公约数, 四则运算 |
 |1063   | 计算谱半径(20)              | [查看题解](https://timtingwei.github.io/2018/08/24/20180824-01/)                                      | 复数 |
 |1064   | 朋友数(20)                 | [查看题解](https://timtingwei.github.io/2018/08/24/20180824-02/)                                      | Hash散列 |
@@ -75,6 +80,7 @@
 |1080   | MOOC期终成绩(25)           |[查看题解](https://timtingwei.github.io/2018/08/18/20180818-02/)                                                                       |排序(map映射) |
 |1085   | PAT单位排行 (25)           |                                      |            |
 |1072   | 开学寄语(20)               | 查看题解                              | 简单题      |
+|1073   | 多选题常见计分法(20)        | [查看题解](https://timtingwei.github.io/2018/09/05/20180905-01/)                                      | 位运算, scanf |
 |1074   | 宇宙无敌加法器(20)          | [查看题解](https://timtingwei.github.io/2018/08/26/20180826-03/)                                      | 进制转换, 栈 |
 |1075   | 链表元素分类(25)            | [查看题解](https://timtingwei.github.io/2018/09/04/20180904-05/)                                      | 链表, map |
 |1076   | Wifi密码(15)               | 查看题解                             | 简单题       |
