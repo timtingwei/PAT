@@ -14,7 +14,9 @@
 |1028   | List Sorting (25)         |[查看题解](https://timtingwei.github.io/2018/08/22/20180822-01/)                              | 排序        |
 |1035   | Password(20)              |[查看题解](https://timtingwei.github.io/2018/09/05/20180905-05/)                              |Hash散列, map|
 |1042   | Shuffling Machine(20)     |[查看题解](https://timtingwei.github.io/2018/09/05/20180905-06/)                              |排序, 进制转换, 链表, 模拟|
-|10xx   | next                      | come on                                                                                     | do it     |
+|1048   | Find Coins(25)            |[查看题解](https://timtingwei.github.io/2018/09/06/20180906-01/)                              |two pointers|
+|1065   | A+B and C (64bit)(20)     |[查看题解](https://timtingwei.github.io/2018/09/06/20180906-02/)                              |大整数       |
+|10xx   | next                      | come on                                                                                     | do it      |
 
 # PAT乙级题目题解
 |ID     |Title                      |C/C++                                                                                       |备注        |
