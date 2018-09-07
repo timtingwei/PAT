@@ -31,3 +31,29 @@ int main() {
   cout << min_n.id << " " << max_n.id << endl;
   return 0;
 }
+
+/*
+// 第二遍做
+#include <iostream>
+#include <cmath>
+#include <string>
+using namespace std;
+
+int main() {
+  string id, max_s = "", min_s = "";
+  double max = 0, min = 100, x, y;
+  int N; cin >> N;
+  while (N--) {
+    cin >> id >> x >> y;
+    double d = sqrt(x*x + y*y);
+    if (d > max) {
+      max_s = id; max = d;
+    }
+    if (d < min) {
+      min_s = id; min = d;
+    }
+  }
+  cout << min_s << " " << max_s << endl;
+  return 0;
+}
+*/
