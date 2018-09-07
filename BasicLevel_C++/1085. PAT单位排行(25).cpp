@@ -39,6 +39,90 @@ A03274 45 hypu
 4 lanx 81 2
 */
 
+// 第三次做
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <unordered_map>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+
+struct Node_a {
+  string school;
+  double full_score;
+  int num;
+};
+
+struct Node_b {
+  double score;
+  int num;
+};
+
+int db_equal(double d1, double d2) {
+  return (-0.005 < d1 - d2) && (d1-d2 < 0.005);
+}
+
+/*
+bool cmp(Node_a n1, Node_a n2) {
+  if (!(db_equal(n1.full_score, n2.full_score))) return n1.full_score > n2.full_score;
+  if (n1.num != n2.num) return n1.num < n2.num;
+  return n1.school < n2.school;
+}
+*/
+bool cmp(Node_a n1, Node_a n2) {
+  if ((int)n1.full_score != (int)n2.full_score) return (int)n1.full_score > (int)n2.full_score;
+  if (n1.num != n2.num) return n1.num < n2.num;
+  return n1.school < n2.school;
+}
+
+int main() {
+  int N; cin >> N;
+  unordered_map<string, Node_b> mp;
+  while (N--) {
+    string id, school; double score;
+    cin >> id >> score >> school;
+    for (int i = 0; i < school.length(); i++) {
+      school[i] = tolower(school[i]);     // lower all school chars
+    }
+    // convert score;
+    if (id[0] == 'B') {
+      score = score / 1.5;
+    } else if (id[0] == 'T') {
+      score = score * 1.5;
+    }
+    auto it = mp.find(school);
+    if (it != mp.end()) {
+      it->second.score += score;
+      it->second.num++;
+    } else {
+      Node_b node;
+      node.score = score; node.num = 1;
+      mp[school] = node;
+    }
+  }
+  vector<Node_a> v;
+  for (auto it = mp.begin(); it != mp.end(); it++) {
+    v.push_back({it->first, it->second.score, it->second.num});
+  }
+
+  sort(v.begin(), v.end(), cmp);
+
+  cout << v.size() << endl;
+  int rank = 1;
+  cout << rank << " " << v[0].school << " " << (int)v[0].full_score << " " << v[0].num << endl;
+  for (int i = 1; i < v.size(); i++) {
+    if ((int)v[i].full_score != (int)v[i-1].full_score) rank = i+1;
+    cout << rank << " " << v[i].school << " " << (int)v[i].full_score << " " << v[i].num << endl;
+  }
+
+
+  return 0;
+}
+
+/*
+// 第二次做
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -102,7 +186,7 @@ int main() {
   }
   return 0;
 }
-
+*/
 
 /*
 // 第一次实现的版本
