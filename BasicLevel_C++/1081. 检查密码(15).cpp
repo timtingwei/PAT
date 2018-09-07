@@ -35,6 +35,9 @@ Your password is wan mei.
 Your password is tai luan le.
 */
 
+
+/*
+// 第一遍解
 #include <iostream>
 #include <string>
 using namespace std;
@@ -70,3 +73,47 @@ int main() {
   return 0;
 }
 
+*/
+
+// 13:22, 13:44
+#include <iostream>
+#include <cstdio>
+#include <cctype>
+#include <string>
+using namespace std;
+
+int main() {
+  int N; cin >> N; getchar();
+  while (N--) {
+    string s;
+    getline(cin, s);
+    if (s.length() < 6) {
+      cout << "Your password is tai duan le." << endl;
+      continue;
+    }
+    int flag_ch = 0, have_d = 0, have_a = 0;
+    for (int i = 0; i < s.length(); i++) {
+      // if (isalpha(s[i]) || isdigit(s[i]) || s[i] == '.') {
+      if (isalnum(s[i]) || s[i] == '.') {
+        if (isdigit(s[i])) have_d = 1;
+        if (isalpha(s[i])) have_a = 1;
+      } else {
+        flag_ch = 1;
+      }
+    }
+    if (flag_ch) {
+      cout << "Your password is tai luan le." << endl;
+      continue;
+    }
+    if (have_a && !have_d) {
+      cout << "Your password needs shu zi." << endl;
+      continue;
+    }
+    if (have_d && !have_a) {
+      cout << "Your password needs zi mu." << endl;
+      continue;
+    }
+    cout << "Your password is wan mei." << endl;
+  }
+  return 0;
+}
