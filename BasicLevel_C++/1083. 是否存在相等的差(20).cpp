@@ -23,6 +23,9 @@
 3 3
 2 2
 */
+
+/*
+// 第一遍做
 #include <iostream>
 #include <cstring>
 #include <vector>
@@ -63,6 +66,33 @@ int main() {
   sort(ans.begin(), ans.end(), cmp);
   for (int i = 0; i < ans.size(); i++) {
     cout << ans[i].delta << " " << ans[i].cnt << endl;
+  }
+  return 0;
+}
+*/
+
+
+// 第二遍做
+// 14:06
+#include <cstdio>
+#include <cstring>
+int cnt[10050];
+
+int main() {
+  int N; scanf("%d", &N);
+  memset(cnt, 0, sizeof(cnt));
+  int max = 0, back = 0, rst = 0;
+  for (int i = 0; i < N; i++) {
+    scanf("%d", &back);
+    rst = (back > i+1) ? back - (i+1) : i+1 - back;
+    cnt[rst]++;
+    max = rst > max ? rst : max;
+  }
+
+  for (int i = max; i >= 0; i--) {
+    if (cnt[i] > 1) {
+      printf("%d %d\n", i, cnt[i]);
+    }
   }
   return 0;
 }
