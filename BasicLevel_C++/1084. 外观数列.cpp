@@ -33,6 +33,8 @@ d, d1, d111, d113, d11231, d112213111, ...
 观察数据构造, 发现之前理解有问题..
 */
 
+/*
+// 第一遍做
 #include <iostream>
 #include <map>
 using namespace std;
@@ -55,5 +57,35 @@ int main() {
   cin >> s >> N;
   for (int i = 0; i < N - 1; i++) { s = perform(s); }
   std::cout << s << std::endl;
+  return 0;
+}
+*/
+
+// 14:23
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+  string s; int N; cin >> s >> N;
+  N--;
+  while (N--) {
+    string next_s = "";
+    s += " ";
+    int i = 1, len = s.length();
+    while (i < len) {
+      int cnt = 1;
+      while (i < len && s[i] == s[i-1]) {
+        i++;
+        cnt++;
+      }
+      next_s += s[i-1];
+      next_s += cnt + '0';
+      i++;
+    }
+    s = next_s;
+  }
+  cout << s << endl;
   return 0;
 }
