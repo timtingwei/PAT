@@ -262,3 +262,54 @@ int main() {
   }
   return 0;
 }
+
+
+// 重新写了一遍
+#include <cstdio>
+#include <cstring>   // strlen
+
+int db_equal(double d1, double d2) {
+  return -0.0005 < d1-d2 && d1-d2 < 0.0005;
+}
+
+int main() {
+  char a[100], b[100];
+  int N, cnt = 0; scanf("%d", &N);
+  double sum = 0;
+  while (N--) {
+    scanf("%s", a);
+    double temp = 0.0;
+    sscanf(a, "%lf", &temp);   // %
+    sprintf(b, "%.2lf", temp);
+// printf("a = %s, b = %s\n", a, b);
+    int flag = 1;
+    for (int i = 0; i < strlen(a); i++) {
+      if (a[i] != b[i]) flag = 0;
+    }
+    // 规避的写法
+    if (!flag || temp < -1000 || temp > 1000) {
+      printf("ERROR: %s is not a legal number\n", a);
+    } else {
+      sum += temp;
+      cnt++;
+    }
+    /*
+    // 浮点数误差的写法
+    if (flag && (-1000 < temp || db_equal(temp, -1000)) && (temp < 1000 || db_equal(temp, 1000))) {
+      sum += temp;
+      cnt++;
+    } else {
+      printf("ERROR: %s is not a legal number\n", a);
+    }
+    */
+  }
+  if (cnt == 0) {
+    printf("The average of 0 numbers is Undefined\n");
+  } else if (cnt == 1) {
+    printf("The average of 1 number is %.2lf\n", sum);
+  } else {
+    printf("The average of %d numbers is %.2lf\n", cnt, sum/cnt);
+  }
+
+  return 0;
+}
