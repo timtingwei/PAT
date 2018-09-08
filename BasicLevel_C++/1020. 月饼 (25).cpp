@@ -85,6 +85,7 @@ int main() {
 
 
 /*
+// 第二遍做
 // 09:36， 9:58, 10:10
 #include <cstdio>
 #include <queue>
@@ -120,7 +121,7 @@ int main() {
     q.push(v[i]);
   }
   double profit = 0.0;
-  while (!db_equal(need, 0.0)) {
+  while (!db_equal(need, 0.0) && !q.empty()) {
     if (q.top().cnt > need) {
       profit += q.top().each_scale * need;
       need = 0;
@@ -134,6 +135,4 @@ int main() {
   printf("%.2lf", profit);
   return 0;
 }
-
-// case2 error
 */
