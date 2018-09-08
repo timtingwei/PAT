@@ -50,3 +50,26 @@ int main() {
   cout << max_i << " " << max_score << "\n";
   return 0;
 }
+
+/*
+// 第二遍做
+#include <cstdio>
+using namespace std;
+
+int score[100500] = {0};
+int main() {
+  int N, max_id; scanf("%d", &N);
+  int max = 0;
+  while (N--) {
+    int id, temp;
+    scanf("%d %d", &id, &temp);
+    score[id] += temp;
+    if (score[id] > max) {
+      max_id = id; max = score[id];
+    }
+  }
+  printf("%d %d\n", max_id, max);
+  return 0;
+}
+
+*/
