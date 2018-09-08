@@ -110,3 +110,30 @@ int main() {
   }
   return 0;
 }
+
+/*
+// int将字符转成ascii
+#include <iostream>
+#include <string>
+using namespace std;
+
+int bad[200] = {0};
+int main() {
+  string bad_s, s;
+  getline(cin, bad_s);
+  getline(cin, s);
+  int up_flag = 0;
+  for (int i = 0; i < bad_s.length(); i++) {
+    if (bad_s[i] == '+') {up_flag = 1; continue;}
+    bad[(int)bad_s[i]] = 1;
+  }
+
+  for (int i = 0; i < s.length(); i++) {
+    if (bad[(int)toupper(s[i])]) continue;   // debug:大写
+    if (up_flag && isupper(s[i])) continue;
+    printf("%c", s[i]);
+  }
+
+  return 0;
+}
+*/
