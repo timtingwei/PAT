@@ -18,6 +18,21 @@
 53
 */
 
+// 字符串操作
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+int main() {
+  int a, b; cin >> a >> b;
+  string temp = to_string(a*b);
+  reverse(temp.begin(), temp.end());
+  cout << stoi(temp) << endl;
+  return 0;
+}
+
+/*
 // 手动模拟反转计算
 #include <cstdio>
 int main() {
@@ -38,3 +53,4 @@ int main() {
   printf("%d\n", ans);
   return 0;
 }
+*/
