@@ -20,20 +20,22 @@ Sample Output:
 */
 
 #include <stdio.h>
-#define MaxSize;
+#define MaxSize 100050
 int G[MaxSize][MaxSize];
 int visited[MaxSize];
 int depth[MaxSize];
 int leaves[MaxSize];
 
+/*
 void InitG(int N) {
   int v, w;
   for (v = 0; v < N; v++) {
     for (w = 0; w < N; w++) {
-      G[v][w] = 1;   /* 有向图 */
+      G[v][w] = 0;
     }
   }
 }
+*/
 
 void InitVDL(int N) {
   int i;
@@ -48,7 +50,7 @@ void DFS(int V, int N) {
   int W;
   visited[V] = 1;
   for (W = 0; W < N; W++) {
-    if (G[V][W] && !visited[W]) {
+    if (G[V][W] == 1 && !visited[W]) {
       depth[W] = depth[V] + 1;
       DFS(W, N);
     }
@@ -60,7 +62,7 @@ int main() {
   double P, r, Lowest;
   cnt_l = Cnt = 0;
   scanf("%d %lf %lf", &N, &P, &r);
-  InitG(N);
+  /* InitG(N); */
   InitVDL(N);
   for (i = 0; i < N; i++) {
     scanf("%d", &K);
@@ -88,7 +90,7 @@ int main() {
   /* 计算最终结果 */
   Lowest = P;
   for (i = 0; i < depth[min]; i++) {
-    Lowest *= (1+r);
+    Lowest *= (1+r/100);    /* 注意百分比!! */
   }
   printf("%.4lf %d\n", Lowest, Cnt);
   return 0;
