@@ -20,8 +20,11 @@ Sample Output:
 */
 
 #include <stdio.h>
+#include <vector>
+using namespace std;
 #define MaxSize 100050
-int G[MaxSize][MaxSize];
+/* int G[MaxSize][MaxSize]; */
+vector<int> G[MaxSize];   /* 动态数组减少遍历数量 */
 int visited[MaxSize];
 int depth[MaxSize];
 int leaves[MaxSize];
@@ -47,14 +50,23 @@ void InitVDL(int N) {
 }
 
 void DFS(int V, int N) {
-  int W;
+  int i, W;
   visited[V] = 1;
+  for (i = 0; i < G[V].size(); i++) {
+    W = G[V][i];
+    if (!visited[W]) {
+      depth[W] = depth[V] + 1;
+      DFS(W, N);
+    }
+  }
+  /*
   for (W = 0; W < N; W++) {
     if (G[V][W] == 1 && !visited[W]) {
       depth[W] = depth[V] + 1;
       DFS(W, N);
     }
   }
+  */
 }
 
 int main() {
@@ -68,7 +80,8 @@ int main() {
     scanf("%d", &K);
     for (j = 0; j < K; j++) {
       scanf("%d", &t);
-      G[i][t] = 1;
+      /* G[i][t] = 1; */
+      G[i].push_back(t);
     }
     if (K == 0) {
       leaves[cnt_l++] = i;   /* 记录叶结点 */
