@@ -1,10 +1,16 @@
 /* Copyright [2019] <mituh> */
 /* 1107-social-clusters-30.cpp */
 /* 并查集 */
+/*
+Find:Hash表找某种爱好第一次出现的人下标, Union: 按秩合并两个人结点,
+找到根结点用vector保存其相反数, 排序后打印
+
+注意: 数组T中, 每个人初始独立成为一个根结点. -2代表为根结点, 规模大小为2
+*/
 
 /*
 Sample Input:
-8
+9
 3: 2 7 10
 1: 4
 2: 5 3
@@ -13,6 +19,7 @@ Sample Input:
 1: 4
 4: 6 8 1 5
 1: 4
+2: 6 4
 
 Sample Output:
 3
@@ -46,20 +53,21 @@ int GetRoot(int p) {
   return p;
 }
 
-int Find(int h, int i) {
-  int p, Root;
-  p = first[h];
-  if (p == -1) {
-    Root = first[h] = i;    /* 记录该爱好第一次出现 对应人的下标 */
-  } else {
-    Root = GetRoot(p);
+int Find(int h, int p) {
+  /* 找到爱好第一次出现的人的下标 */
+  if (first[h] == -1) {   /* 该爱好未出现过 */
+    first[h] = p;         /* 自身下标 */
   }
-  return Root;
+  return first[h];
 }
 
-void Union(int R1, int R2) {
+void Union(int N1, int N2) {
+  /* 按秩序合并两个结点 */
+  int R1, R2;
+  R1 = GetRoot(N1);
+  R2 = GetRoot(N2);
   if (R1 == R2) return;
-  if (T[R1] < T[R2]) {   /* 比较秩大小, 而不是下标 */
+  if (T[R1] < T[R2]) {   /* 比较秩大小, 而不是下标!! */
     T[R1] += T[R2];
     T[R2] = R1;
   } else {
@@ -77,12 +85,9 @@ void ReadHobby(int N, int p) {
     scanf("%d", &h);
     hobbies.push_back(h);
   }
-  /* 先合并第一个结点 */
-  Union(p, Find(hobbies[0], p));
-  for (i = 1; i < N; i++) {
-    Union(GetRoot(p), Find(hobbies[i], p));
+  for (i = 0; i < N; i++) {
+    Union(p, Find(hobbies[i], p));
   }
-  /* printf("T[%d] = %d\n", p, T[p]); */
 }
 
 bool cmp(int a, int b) {
