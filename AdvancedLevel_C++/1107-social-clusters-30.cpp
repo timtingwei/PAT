@@ -40,31 +40,31 @@ void InitFirstAndTree(int N) {
 }
 
 int GetRoot(int p) {
-  while (p >= 0) {
+  while (T[p] >= 0) {
     p = T[p];
   }
   return p;
 }
 
 int Find(int h, int i) {
-  int p;
+  int p, Root;
   p = first[h];
   if (p == -1) {
-    first[h] = i;    /* 记录该爱好第一次出现 对应人的下标 */
-    return first[h];
+    Root = first[h] = i;    /* 记录该爱好第一次出现 对应人的下标 */
+  } else {
+    Root = GetRoot(p);
   }
-  return GetRoot(p);
+  return Root;
 }
 
 void Union(int R1, int R2) {
-  if (R1 < R2) {
+  if (R1 == R2) return;
+  if (T[R1] < T[R2]) {   /* 比较秩大小, 而不是下标 */
     T[R1] += T[R2];
     T[R2] = R1;
-  } else if (R2 < R1) {
+  } else {
     T[R2] += T[R1];
     T[R1] = R2;
-  } else {  /* R1 == R2*/
-    return;
   }
 }
 
@@ -80,12 +80,13 @@ void ReadHobby(int N, int p) {
   /* 先合并第一个结点 */
   Union(p, Find(hobbies[0], p));
   for (i = 1; i < N; i++) {
-    Union(T[p], Find(hobbies[i], p));
+    Union(GetRoot(p), Find(hobbies[i], p));
   }
+  /* printf("T[%d] = %d\n", p, T[p]); */
 }
 
 bool cmp(int a, int b) {
-  return b >= a;
+  return a >= b;
 }
 
 void PrintClusters(int N) {
