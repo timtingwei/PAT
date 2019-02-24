@@ -155,3 +155,56 @@ int main() {
   }
   return 0;
 }
+
+/*
+// 根据luochuo的代码, 重写. 完全二叉树最大结点序号即结点个数(非完全二叉树会往后挤)
+#include <iostream>
+#include <string>
+using namespace std;
+#define MaxSize 25
+struct Node {
+  int l, r;
+} a[MaxSize];                // 完全二叉树定义成结构数组, 方便访问左右子树
+int ans, maxn = 0;
+void dfs(int root, int index) {
+  if (index > maxn) {       // dfs递归中, 改变最大结点数量和下标
+    maxn = index;
+    ans = root;
+  }
+  if (a[root].l != -1) {
+    dfs(a[root].l, index * 2);
+  }
+  if (a[root].r != -1) {
+    dfs(a[root].r, index * 2 + 1);
+  }
+}
+
+int main() {
+  int n, i, check[MaxSize] = {0}, root = 0;
+  string s1, s2;
+  cin >> n;
+  for (i = 0; i < n; i++) {
+    cin >> s1 >> s2;
+    if (s1 == "-") {
+      a[i].l = -1;
+    } else {
+      a[i].l = stoi(s1);            // 用string读入, =判断, stoi换成int
+      check[stoi(s1)] = 1;
+    }
+    if (s2 == '-') {
+      a[i].r = -1;
+    } else {
+      a[i].r = stoi(s2);
+      check[stoi(s2)] = 1;
+    }
+  }
+  while (check[root] != 0) root++;     // 下标移动写while
+  dfs(root, 1);
+  if (maxn == n) {
+    cout << "YES " << ans;
+  } else {
+    cout << "NO " << root;
+  }
+  return 0;
+}
+*/
