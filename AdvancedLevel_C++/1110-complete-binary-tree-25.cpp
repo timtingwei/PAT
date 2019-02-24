@@ -53,7 +53,7 @@ NO 6
 #include <cstdio>
 #include <cstring>
 
-#define MaxSize 21
+#define MaxSize 25   /* 开成21有一个case WA */
 int T[MaxSize];
 int check[MaxSize];
 
@@ -151,7 +151,7 @@ int main() {
   if (IsContinues()) {
     printf("YES %d\n", T[N]);
   } else {
-    printf("NO %d\n", T[0]);
+    printf("NO %d\n", T[1]);   /* 跟结点从1开始! */
   }
   return 0;
 }
