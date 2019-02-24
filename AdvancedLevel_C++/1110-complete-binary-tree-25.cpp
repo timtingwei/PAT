@@ -30,6 +30,24 @@ Sample Input 2:
 
 Sample Output 2:
 NO 1
+
+自己写的测试数据
+Sample Input 3:
+10
+7 8
+- -
+9 -
+- -
+0 1
+2 3
+4 5
+- -
+- -
+- -
+
+Sample Output 3:
+NO 6
+
 */
 
 #include <cstdio>
@@ -102,7 +120,7 @@ void ReadData(int N) {
     if (c2 == Null) {   /* 读到- */
       temp[i][1] = -1;
     } else {
-      temp[i][0] = c2;
+      temp[i][1] = c2;   /* 写仔细点! */
       check[c2] = 1;
     }
   }
@@ -111,7 +129,6 @@ void ReadData(int N) {
       Root = i; break;
     }
   }
-  printf("Root = %d\n", Root);
   /* InitT(); */
   for (i = 0; i < MaxSize; i++) { T[i] = -1;}
   BuildTree(temp, Root, 1);
@@ -120,7 +137,7 @@ void ReadData(int N) {
 int IsContinues() {
   int i;
   for (i = 1; i < MaxSize-1; i++) {
-    if (T[i] != -1 && T[i+1] == -1) {   /* 空结点后出现非空结点 */
+    if (T[i] == -1 && T[i+1] != -1) {   /* 空结点后出现非空结点 顺序不要写错!*/
       return 0;
     }
   }
@@ -132,7 +149,7 @@ int main() {
   scanf("%d", &N);
   ReadData(N);
   if (IsContinues()) {
-    printf("YES %d|n", T[N]);
+    printf("YES %d\n", T[N]);
   } else {
     printf("NO %d\n", T[0]);
   }
