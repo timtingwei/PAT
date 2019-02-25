@@ -101,10 +101,69 @@ void Dijkstra(int dist[], int path[], int S, int type) {
 }
 
 void GetMinPath() {
-  
+  int p, i, v, w;
+  min_shortest_fast = min_fastest_depth = 0;
+  Shortest = dist[D];
+  Fastest = time[D];
+  shorest_path.clear(); fastest_path.clear();
+  for (p = D; p != S; p = path_d[p]) {
+    shortest_path.push_back(p);
+  }
+  shortest_path.push_back(S);
+  for (i = shortest_path.size()-1; i > 0; i--) {
+    v = shortest_path[i];
+    w = shortest_path[i-1];
+    min_shortest_fast += G[v][w].t;
+  }
+  for (p = D; p != S; p = path_t[p]) {
+    fastest_path.push_back(p);
+  }
+  fastest_path.push_back(S);
+  min_fastest_depth = fastest_path.size();
 }
-void dfs_d(int V);
-void dfs_t(int V);
+
+int dfs_time[MaxSize];
+void dfs_d(int V) {
+  int W, p;
+  for (W = 0; W < n; W++) {
+    if (G[V][W].l < INFINITY) {  /* 路通 */
+      dist[W] = dist[V] + G[V][W].l;
+      dfs_time[W] = dfs_time[V] + G[V][W].t;
+      path_d[W] = V;
+
+      if (dist[W] == Shortest && dfs_time[W] < min_shortest_fast) {
+        /* 时间最短, 时间更少, 需要更新 */
+        shortest_path.clear();
+        for (p = W; p != S; p = path_d[p]) {
+          shortest_path.push_back(p);
+        }
+        shortest_path.push_back(S);
+        shortest_fast = time[W];
+      }
+      dfs_d(W);
+    }
+  }
+}
+
+void dfs_t(int V, int depth) {
+  int W, p;
+  for (W = 0; W < n; W++) {
+    if (G[V][W].t < INFINITY) {   /* 存在边 */
+      depth += 1;
+      time[W] = time[V] + G[V][W].t;
+      path_t[W] = V;
+      if (time[W] == Fastest && depth < min_fastest_depth) {
+        /* 时间最快, 结点更少, 需要更新 */
+        for (p = W; p != S; p = path_t[p]) {
+          fastest_path.push_back(p);
+        }
+        fastest_path.push_back(S);
+        min_fastest_depth = depth;
+      }
+      dfs_t(W, depth);
+    }
+  }
+}
 
 int main() {
   scanf("%d %d", &n, &m);
@@ -116,6 +175,7 @@ int main() {
     printf("Distance = %d; Time = %d: ", dist[D], time[D]);
     PrintPath(shortest_path);
   } else {
+    dfs_time[S] = 0;
     dfs_d(S);      /* 最短找最快 */
     dfs_f(S, 1);   /* 最快找结点最少, 1是根结点算作1个结点 */
     printf("Distance = %d ", Shortest); PrintPath(shortest_path);
