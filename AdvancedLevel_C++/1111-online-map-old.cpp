@@ -1,6 +1,6 @@
 /* Copyright [2019] <mituh> */
-/* 1111-online-map.cpp */
-/* Dijkstr + DFS  */
+/* 1111-online-map-old.cpp */
+/* Dijkstra + DFS  */
 /*
 Sample Input 1:
 10 15
