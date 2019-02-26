@@ -6,10 +6,11 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <stack>
 using namespace std;
 #define MaxSize 210
 #define INFINITY 65533
-int n, k, S, D, Least, Num;
+int n, k, S, D, Least, Num = 0;
 int collected[MaxSize],
   cost[MaxSize], happiness[MaxSize], node[MaxSize], path[MaxSize];
 unordered_map<int, string> mp_itos;
@@ -96,19 +97,30 @@ void Dijkstra() {
   Least = cost[D];   /* 记录最小花费 */
 }
 
-void dfs(int Least) {
+stack<int> stk;
+void dfs(int V, int cost) {
   /* 找到从S到D所有路径, 修改路径数量 */
-  int cnt;
-
-  /* Num += 1 */
-  /* cout << "Num = " << Num << endl; */
+  /* 调用dfs(S, 0) */
+  int W;
+  visited[V] = 1;
+  stk.push(V);
+  if (V == D && cost == Least) {
+    Num++; return;
+  }
+  for (W = 0; W < n; W++) {
+    if (G[V][W] < INFINITY && !visited[W]) {
+      dfs(W, cost);
+      while (stk.top() != W) {visited[stk.pop()] = 0;}
+    }
+  }
+  cout << "Num = " << Num << endl;
 }
 
 int main() {
   cin >> n >> k;   /* 剩余的name在ReadData里读 */
   ReadData();
   Dijkstra();
-  dfs(Least);
+  dfs(S, 0);
   cout << Least << " " << Num << " " << happiness[D]
        << " " << (int)happiness[D]/node[D] << endl;
   PrintPath(path);
