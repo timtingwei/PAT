@@ -236,6 +236,8 @@ void GetMinPath() {
   }
   fastest_path.push_back(S);
   min_fastest_depth = fastest_path.size();
+  /* printf("min_shortest_fast = %d, min_fastest_depth = %d\n",
+    min_shortest_fast, min_fastest_depth); */
 }
 
 int IsSame() {
@@ -263,7 +265,8 @@ void dfs_d(int V) {
       dist[W] = dist[V] + G[V][W].l;
       dfs_time[W] = dfs_time[V] + G[V][W].t;
       path_d[W] = V;
-      if (dist[W] == Shortest && dfs_time[W] < min_shortest_fast) {
+      /* printf("dfs_time[%d] = %d\n", W, dfs_time[W]); */
+      if (W == D && dist[W] == Shortest && dfs_time[W] < min_shortest_fast) {
         /* 时间最短, 时间更少, 需要更新 */
         shortest_path.clear();
         for (p = W; p != S; p = path_d[p]) {
@@ -276,6 +279,7 @@ void dfs_d(int V) {
       dfs_d(W);
     }
   }
+  visited_d[V] = 0;   /* 递归完该结点, 可再被访问 */
 }
 
 int visited_t[MaxSize] = {0};
@@ -284,12 +288,14 @@ void dfs_t(int V, int depth) {
   visited_t[V] = 1;
   for (W = 0; W < n; W++) {
     if (!visited_t[W] && G[V][W].t < INFINITY) {   /* 存在边 */
-      visited_t[W] = 1;
+      /* visited_t[W] = 1; */
       depth += 1;
       time_a[W] = time_a[V] + G[V][W].t;
       path_t[W] = V;
-      if (time_a[W] == Fastest && depth < min_fastest_depth) {
+      /* printf("time_a[%d] = %d, Fastest = %d\n", W, time_a[W], Fastest); */
+      if (W == D && time_a[W] == Fastest && depth < min_fastest_depth) {   /* 一定要递归到目标结点 */
         /* 时间最快, 结点更少, 需要更新 */
+        fastest_path.clear();
         for (p = W; p != S; p = path_t[p]) {
           fastest_path.push_back(p);
         }
@@ -299,6 +305,7 @@ void dfs_t(int V, int depth) {
       dfs_t(W, depth);
     }
   }
+  visited_t[V] = 0;
 }
 
 void PrintPath(vector<int> path) {
@@ -321,16 +328,16 @@ int main() {
   Dijkstra_d(S);   /* 最短 */
   Dijkstra_t(S);   /* 最快 */
   GetMinPath();  /* 根据dist, time_a, path_d, path_t得到并列的最短路信息 */
+  /* 先得到最快的最短路 和 最少结点的最快路后, 再判断两条路径是否相同 */
+  dfs_time[S] = 0;
+  dfs_d(S);      /* 最短找最快 */
+  dfs_t(S, 1);   /* 最快找结点最少, 1是根结点算作1个结点 */
   if (IsSame()) {
-    printf("Distance = %d; Time = %d: ", dist[D], time_a[D]);
+    printf("Distance = %d; Time = %d: ", Shortest, Fastest);
     PrintPath(shortest_path);
   } else {
-    dfs_time[S] = 0;
-    dfs_d(S);      /* 最短找最快 */
-    dfs_t(S, 1);   /* 最快找结点最少, 1是根结点算作1个结点 */
     printf("Distance = %d: ", Shortest); PrintPath(shortest_path);
     printf("Time = %d: ", Fastest); PrintPath(fastest_path);
   }
   return 0;
 }
-
