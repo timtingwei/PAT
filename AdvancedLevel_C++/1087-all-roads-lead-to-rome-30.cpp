@@ -9,10 +9,10 @@
 #include <stack>
 using namespace std;
 #define MaxSize 210
-#define INFINITY 65533
+/* #define INFINITY 65533 */   /* g++中已经定义 */
 int n, k, S, D, Least, Num = 0;
-int collected[MaxSize],
-  cost[MaxSize], happiness[MaxSize], node[MaxSize], path[MaxSize];
+int collected[MaxSize], cost[MaxSize],
+  happiness[MaxSize], node[MaxSize], path[MaxSize];
 unordered_map<int, string> mp_itos;
 unordered_map<string, int> mp_stoi;
 int V_h[MaxSize];   /* 城市的快乐值 */
@@ -29,7 +29,7 @@ void ReadData() {
   int i, h, c, V, W; string name, adj_name;
   InitG();
   cin >> name;
-  mp_stoi[0] = name; mp_itos[name] = 0; V_h[0] = 0;
+  mp_stoi[name] = 0; mp_itos[0] = name; V_h[0] = 0;
   for (i = 1; i < n; i++) {
     cin >> name >> h;
     mp_stoi[name] = i; mp_itos[i] = name; V_h[i] = h;
@@ -59,7 +59,7 @@ void Dijkstra() {
   for (i = 0; i < n; i++) {
     collected[i] = 0;
     happiness[i] = -1;      /* 比大 */
-    node[MaxSize] = INFINITY;
+    node[i] = INFINITY;
   }
   for (V = 0; V < n; V++) {
     cost[V] = G[S][V];   /* 同时初始化cost */
@@ -82,11 +82,11 @@ void Dijkstra() {
           node[W] = node[V] + 1;
           path[W] = V;
         } else if (cost[V] + G[V][W] == cost[W]) {
-          if (happniess[V] + V_h[W] > happiness[W]) {
+          if (happiness[V] + V_h[W] > happiness[W]) {
             happiness[W] = happiness[V] + V_h[W];
             node[W] = node[V] + 1;
             path[W] = V;
-          } else if (happniess[V] + V_h[W] == happiness[W]) {
+          } else if (happiness[V] + V_h[W] == happiness[W]) {
             node[W] = node[V] + 1;
             path[W] = V;
           }
@@ -98,6 +98,7 @@ void Dijkstra() {
 }
 
 stack<int> stk;
+int visited[MaxSize] = {0};
 void dfs(int V, int cost) {
   /* 找到从S到D所有路径, 修改路径数量 */
   /* 调用dfs(S, 0) */
@@ -110,10 +111,29 @@ void dfs(int V, int cost) {
   for (W = 0; W < n; W++) {
     if (G[V][W] < INFINITY && !visited[W]) {
       dfs(W, cost);
-      while (stk.top() != W) {visited[stk.pop()] = 0;}
+      while (stk.top() != W) { visited[stk.top()] = 0; stk.pop(); }
     }
   }
   cout << "Num = " << Num << endl;
+}
+
+void PrintPath(int path[]) {
+  int p, i, index, flag = 0;
+  vector<int> v;
+  for (p = D; p != S; p = path[p]) {
+    v.push_back(p);
+  }
+  v.push_back(p);
+  for (i = v.size()-1; i >= 0; i--) {
+    index = v[i];
+    if (flag) {
+      cout << "->";
+    } else {
+      flag = 1;
+    }
+    cout << mp_itos[index];
+  }
+  cout << endl;
 }
 
 int main() {
