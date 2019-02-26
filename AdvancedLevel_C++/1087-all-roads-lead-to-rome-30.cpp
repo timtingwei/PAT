@@ -37,7 +37,7 @@ void ReadData() {
   for (i = 0; i < k; i++) {
     cin >> name >> adj_name >> c;
     V = mp_stoi[name]; W = mp_stoi[adj_name];
-    cout << V << " " << W << endl;
+    /* cout << V << " " << W << endl; */
     G[V][W] = c; G[W][V] = c;
   }
   S = 0;
@@ -79,7 +79,7 @@ void Dijkstra() {
     V = FindMinCost(cost, collected);
     if (V == -1) break;    /* 不要忘记不存在V的情况!! */
     collected[V] = 1;      /* 也不要忘记把V收进来 */
-    printf("V = %d\n", V);
+    /* printf("V = %d\n", V); */
     for (W = 0; W < n; W++) {
       if (G[V][W] < INFINITY_new && !collected[W]) {
         if (cost[V] + G[V][W] < cost[W]) {
@@ -93,7 +93,7 @@ void Dijkstra() {
             node[W] = node[V] + 1;
             path[W] = V;
           } else if (happiness[V] + V_h[W] == happiness[W]) {
-            printf("node same\n");
+            /* printf("node same\n"); */
             if (node[V] + 1 < node[W]) {
               node[W] = node[V] + 1;
               path[W] = V;
@@ -114,13 +114,18 @@ void dfs(int V, int cost) {
   int W;
   visited[V] = 1;
   stk.push(V);
-  if (V == D && cost == Least) {
-    Num++; return;
+  /* printf("in dfs V = %d, cost = %d\n", V, cost); */
+  if (V == D) {
+    if (cost == Least) Num++;
+    return;
   }
   for (W = 0; W < n; W++) {
     if (G[V][W] < INFINITY_new && !visited[W]) {
-      dfs(W, cost);
-      while (stk.top() != W) { visited[stk.top()] = 0; stk.pop(); }
+      /* cost += G[V][W]; */
+      dfs(W, cost+G[V][W]);
+      /* while (stk.top() != W) { visited[stk.top()] = 0; stk.pop(); } */
+      /* printf("finished a dfs\n"); */
+      visited[W] = 0;
     }
   }
   /* cout << "Num = " << Num << endl; */
@@ -148,9 +153,9 @@ void PrintPath(int path[]) {
 int main() {
   cin >> n >> k;   /* 剩余的name在ReadData里读 */
   ReadData();
-  printf("finish ReadData()\n");
+  /* printf("finish ReadData()\n"); */
   Dijkstra();
-  printf("finish Dijkstra()\n");
+  /* printf("finish Dijkstra()\n"); */
   dfs(S, 0);
   cout << Num << " " << Least << " " << happiness[D]
        << " " << (int)happiness[D]/node[D] << endl;
