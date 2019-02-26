@@ -9,7 +9,7 @@
 #include <stack>
 using namespace std;
 #define MaxSize 210
-/* #define INFINITY 65533 */   /* g++中已经定义 */
+#define INFINITY_new 65533   /* g++中已经定义不同INFINITY */
 int n, k, S, D, Least, Num = 0;
 int collected[MaxSize], cost[MaxSize],
   happiness[MaxSize], node[MaxSize], path[MaxSize];
@@ -21,7 +21,7 @@ int G[MaxSize][MaxSize];
 void InitG() {
   int V, W;
   for (V = 0; V < n; V++) {
-    for (W = 0; W < n; W++) { G[V][W] = INFINITY; }
+    for (W = 0; W < n; W++) { G[V][W] = INFINITY_new; }
   }
 }
 
@@ -34,9 +34,10 @@ void ReadData() {
     cin >> name >> h;
     mp_stoi[name] = i; mp_itos[i] = name; V_h[i] = h;
   }
-  for (i = 0; i < n; i++) {
+  for (i = 0; i < k; i++) {
     cin >> name >> adj_name >> c;
     V = mp_stoi[name]; W = mp_stoi[adj_name];
+    cout << V << " " << W << endl;
     G[V][W] = c; G[W][V] = c;
   }
   S = 0;
@@ -44,7 +45,7 @@ void ReadData() {
 }
 
 int FindMinCost(int cost[], int collected[]) {
-  int V, min = INFINITY, ans = -1;
+  int V, min = INFINITY_new, ans = -1;
   for (V = 0; V < n; V++) {
     if (!collected[V] && cost[V] < min) {
       min = cost[V];
@@ -58,13 +59,15 @@ void Dijkstra() {
   int i, V, W;
   for (i = 0; i < n; i++) {
     collected[i] = 0;
-    happiness[i] = -1;      /* 比大 */
-    node[i] = INFINITY;
+    happiness[i] = 0;      /* 比大 */
+    node[i] = INFINITY_new;
   }
   for (V = 0; V < n; V++) {
     cost[V] = G[S][V];   /* 同时初始化cost */
-    if (cost[V] < INFINITY) {
+    if (cost[V] < INFINITY_new) {
       path[V] = S;
+      happiness[V] = V_h[V];    /* 紧邻结点快乐值也要初始化!?? */
+      node[V] = 1;              /* 同上 */
     } else {
       path[V] = -1;
     }
@@ -74,8 +77,11 @@ void Dijkstra() {
 
   while (1) {
     V = FindMinCost(cost, collected);
+    if (V == -1) break;    /* 不要忘记不存在V的情况!! */
+    collected[V] = 1;      /* 也不要忘记把V收进来 */
+    printf("V = %d\n", V);
     for (W = 0; W < n; W++) {
-      if (G[V][W] < INFINITY && !collected[W]) {
+      if (G[V][W] < INFINITY_new && !collected[W]) {
         if (cost[V] + G[V][W] < cost[W]) {
           cost[W] = cost[V] + G[V][W];
           happiness[W] = happiness[V] + V_h[W];
@@ -87,8 +93,11 @@ void Dijkstra() {
             node[W] = node[V] + 1;
             path[W] = V;
           } else if (happiness[V] + V_h[W] == happiness[W]) {
-            node[W] = node[V] + 1;
-            path[W] = V;
+            printf("node same\n");
+            if (node[V] + 1 < node[W]) {
+              node[W] = node[V] + 1;
+              path[W] = V;
+            }
           }
         }
       }
@@ -109,12 +118,12 @@ void dfs(int V, int cost) {
     Num++; return;
   }
   for (W = 0; W < n; W++) {
-    if (G[V][W] < INFINITY && !visited[W]) {
+    if (G[V][W] < INFINITY_new && !visited[W]) {
       dfs(W, cost);
       while (stk.top() != W) { visited[stk.top()] = 0; stk.pop(); }
     }
   }
-  cout << "Num = " << Num << endl;
+  /* cout << "Num = " << Num << endl; */
 }
 
 void PrintPath(int path[]) {
@@ -139,9 +148,11 @@ void PrintPath(int path[]) {
 int main() {
   cin >> n >> k;   /* 剩余的name在ReadData里读 */
   ReadData();
+  printf("finish ReadData()\n");
   Dijkstra();
+  printf("finish Dijkstra()\n");
   dfs(S, 0);
-  cout << Least << " " << Num << " " << happiness[D]
+  cout << Num << " " << Least << " " << happiness[D]
        << " " << (int)happiness[D]/node[D] << endl;
   PrintPath(path);
   return 0;
