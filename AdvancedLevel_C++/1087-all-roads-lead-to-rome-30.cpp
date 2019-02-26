@@ -106,30 +106,24 @@ void Dijkstra() {
   Least = cost[D];   /* 记录最小花费 */
 }
 
-stack<int> stk;
 int visited[MaxSize] = {0};
 void dfs(int V, int cost) {
   /* 找到从S到D所有路径, 修改路径数量 */
   /* 调用dfs(S, 0) */
   int W;
   visited[V] = 1;
-  stk.push(V);
-  /* printf("in dfs V = %d, cost = %d\n", V, cost); */
   if (V == D) {
     if (cost == Least) Num++;
     return;
   }
   for (W = 0; W < n; W++) {
     if (G[V][W] < INFINITY_new && !visited[W]) {
-      /* cost += G[V][W]; */
-      dfs(W, cost+G[V][W]);
-      /* while (stk.top() != W) { visited[stk.top()] = 0; stk.pop(); } */
-      /* printf("finished a dfs\n"); */
+      dfs(W, G[V][W] + cost);
       visited[W] = 0;
     }
   }
-  /* cout << "Num = " << Num << endl; */
 }
+
 
 void PrintPath(int path[]) {
   int p, i, index, flag = 0;
@@ -153,9 +147,7 @@ void PrintPath(int path[]) {
 int main() {
   cin >> n >> k;   /* 剩余的name在ReadData里读 */
   ReadData();
-  /* printf("finish ReadData()\n"); */
   Dijkstra();
-  /* printf("finish Dijkstra()\n"); */
   dfs(S, 0);
   cout << Num << " " << Least << " " << happiness[D]
        << " " << (int)happiness[D]/node[D] << endl;
