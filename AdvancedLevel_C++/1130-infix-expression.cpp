@@ -23,11 +23,11 @@ int ReadData(int n) {
   for (Root = 1; have[Root] != 0; Root++) {}
   return Root;
 }
-vector<string> op = {"+", "-", "*", "/", "\\", "%"};
+
 int IsOpr(string s) {
-  int i;
-  for (i = 0; i < op.size(); i++) {
-    if (s == op[i]) return 1;
+  if (s == "+" || s == "-" || s == "*" || s == "/"
+      || s == "\\" || s == "%" || s == "^") {     /* case4检测^运算符!! */
+    return 1;
   }
   return 0;
 }
