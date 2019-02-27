@@ -7,12 +7,18 @@
 using namespace std;
 #define MaxSize 10010    /* 图的结点编号在00000~99999*/
 #define INFI 65533
-vector<int> G[MaxSize];  /* 邻接点存在vec中 */
 /* map<int, int> mp_line; */  /* mp_line[node_i] = line_i */
 /* 同一个结点可能属于多条路线, 不能简单用Hash表来查 */
-vector<map<int, vector<int>> > mp_vec(110);   /* 存放每条路线上结点的上下结点 */
+/* 重构: 把路线编号记录到边结点上去  */
+typedef struct GNode *Node;
+struct GNode {
+  int next;
+  int line;   /* 假设从V到W的路径只有一条, 不然答案就不唯一 */
+};
+vector<Node> G[MaxSize];
+
 void ReadGraph(int n) {
-  int i, j, m, V, W; vector<int> line; map<int, vector<int> > mp;
+  int i, j, m, V, W; vector<int> line; Node node_w, node_v;
   for (i = 1; i <= n; i++) {
     scanf("%d", &m);
     line.clear();
@@ -24,24 +30,17 @@ void ReadGraph(int n) {
     for (j = 0; j < m-1; j++) {
       /* 从头到尾方向 */
       V = line[j]; W = line[j+1];
-      G[V].push_back(W);
-      G[W].push_back(V);
-      mp[V].push_back(W);   /* 下一个为W站 */
-      mp[W].push_back(V);   /* W的上一站为V */
-    }
-    mp_vec[i] = mp;
-  }
-}
+      node_w = (Node)malloc(sizeof(GNode));
+      node_w->next = W;
+      node_w->line = i;
+      G[V].push_back(node_w);
 
-int IsTransfer(int V, int line, int W) {
-  /* 检查W对于V以及原先的线路来说, 是否换乘 */
-  /* 在line上, V的上下两个结点next1, next2确定, 若W == next, 返回0, 否则返回1 */
-  int i, ok = 0;
-  vector<int> vec = mp_vec[line][V];
-  for (i = 0; i < vec.size(); i++) {
-    if (W == vec[i]) ok = 1;
+      node_v = (Node)malloc(sizeof(GNode));
+      node_v->next = V;
+      node_v->line = i;
+      G[W].push_back(node_v);
+    }
   }
-  return ok;
 }
 
 vector<int> ans_line_v, ans_node_v;
@@ -70,6 +69,7 @@ void Refresh(vector<int> line, vector<int> node) {
   }
 }
 
+/*
 void PrintV(vector<int> v) {
   int i;
   for (i = 0; i < v.size(); i++) {
@@ -77,16 +77,53 @@ void PrintV(vector<int> v) {
   }
   printf("\n");
 }
+*/
 
-int IsTransfer(int V, int line, int W) {
-  /* 检查W对于V以及原先的线路来说, 是否换乘 */
-  /* 在line上, V的上下两个结点next1, next2确定, 若W == next, 返回0, 否则返回1 */
-}
-
+/*
 int visited[MaxSize] = {0};
 void dfs(int V, int D, int node, int transfer, int line,
   vector<int> now_line_v, vector<int> now_node_v) {
   int W, i; vector<int> tmp_line_v, tmp_node_v;
+  visited[V] = 1;
+  if (V == D) {
+    tmp_node_v = Copy(now_node_v);
+    tmp_node_v.push_back(D);
+    if (node < min_node) {
+      min_node = node;
+      Refresh(now_line_v, tmp_node_v);
+    } else if (node == min_node && transfer < min_transfer) {
+      min_transfer = transfer;
+      Refresh(now_line_v, tmp_node_v);
+    }
+    return;
+  }
+  if (node > min_node || (node == min_node && transfer > min_transfer)) {
+    return;
+  }
+
+  for (i = 0; i < G[V].size(); i++) {
+    W = G[V][i];
+    if (!visited[W]) {
+      if (!IsTransfer(V, line, W)) {
+        dfs(W, D, node+1, transfer, line, now_line_v, now_node_v);
+      } else {
+        tmp_line_v = Copy(now_line_v); tmp_node_v = Copy(now_node_v);
+        tmp_line_v.push_back(mp_line[W]);
+        tmp_node_v.push_back(V);
+        dfs(W, D, node+1, transfer+1, mp_line[W], tmp_line_v, tmp_node_v);
+      }
+      visited[W] = 0;
+    }
+  }
+}
+*/
+
+int visited[MaxSize] = {0};
+void dfs(int V, int D, int node, int transfer, int line,
+         vector<int> now_line_v, vector<int> now_node_v) {
+  int W, i, next_line; vector<int> tmp_line_v, tmp_node_v;
+  /* 调用 dfs(S, D, 0, 0, 0, start_line_v, start_node_v);
+     linec传入0, 会在首个结点处改变 */
   visited[V] = 1;
   /* printf("V = %d, D = %d, node = %d, transfer = %d, line = %d\n",
          V, D, node, transfer, line); 
@@ -108,17 +145,18 @@ void dfs(int V, int D, int node, int transfer, int line,
     return;
   }
 
-  for (i = 0; i < G[V].size(); i++) {
-    W = G[V][i];
+  for (i = 0; i < G[V].size(); i++) {   /* 遍历V的每个邻接点 */
+    W = G[V][i]->next;
     if (!visited[W]) {
-      if (!IsTransfer(V, line, W)) {
+      next_line = G[V][i]->line;
+      if (next_line == line) {
         /* if (mp_line[W] == line) { 不能简单的通过查表来判断路径还是否相同!! */
         dfs(W, D, node+1, transfer, line, now_line_v, now_node_v);
       } else {
         tmp_line_v = Copy(now_line_v); tmp_node_v = Copy(now_node_v);
-        tmp_line_v.push_back(mp_line[W]);   /* 把下条路线压入 */
+        tmp_line_v.push_back(next_line);   /* 把下条路线压入 */
         tmp_node_v.push_back(V);            /* 把当前结点压入!! */
-        dfs(W, D, node+1, transfer+1, mp_line[W], tmp_line_v, tmp_node_v);
+        dfs(W, D, node+1, transfer+1, next_line, tmp_line_v, tmp_node_v);
       }
       visited[W] = 0;
     }
@@ -142,11 +180,10 @@ void PrintPath(vector<int> line, vector<int> node, int min_node) {
 
 void FindPath(int S, int D) {
   vector<int> start_line_v, start_node_v;
-  start_line_v.push_back(mp_line[S]);
-  start_node_v.push_back(S);
-  
-  dfs(S, D, 0, 0, mp_line[S], start_line_v, start_node_v);
-  
+  /* start_line_v.push_back(mp_line[S]); */
+  /* start_node_v.push_back(S); */
+  /* dfs(S, D, 0, 0, mp_line[S], start_line_v, start_node_v); */
+  dfs(S, D, 0, 0, 0, start_line_v, start_node_v);
   PrintPath(ans_line_v, ans_node_v, min_node);
 }
 
@@ -154,8 +191,6 @@ int main() {
   int n, k, S, D;
   scanf("%d", &n);
   ReadGraph(n);
-  printf("test IsTransfer(): \n");
-  printf("ok = %d\n", IsTransfer(1005, 1, 1306));
   scanf("%d", &k);
   while (k--) {
     scanf("%d %d", &S, &D);
