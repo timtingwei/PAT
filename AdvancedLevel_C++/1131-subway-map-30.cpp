@@ -7,7 +7,7 @@
 using namespace std;
 #define MaxSize 10000
 int visited[MaxSize] = {0};
-vector<vector<int>> G(MaxSize);
+vector<vector<int> > G(MaxSize);
 int minCnt, minTransfer, start, end1;
 vector<int> tempPath, path;
 unordered_map <int, int> line;
@@ -35,7 +35,7 @@ void dfs(int node, int cnt) {
   if (node == end1) return;
   int i;
   for (i = 0; i < G[node].size(); i++) {
-    if (visited[G[node][i] == 0) {
+    if (visited[G[node][i]] == 0) {
       visited[G[node][i]] = 1;
       tempPath.push_back(G[node][i]);
       dfs(G[node][i], cnt+1);
@@ -70,10 +70,10 @@ int main() {
     printf("%d\n", minCnt);
     int preLine = 0, preTransfer = start;
     for (j = 1; j < path.size(); j++) {
-      if (line[path[j-1]*10000+line[j]] != preLine) {
+      if (line[path[j-1]*10000+path[j]] != preLine) {
         if (preLine != 0) printf("Take Line#%d from %04d to %04d.\n",
                                  preLine, preTransfer, path[j-1]);
-        preLine = line[path[j-1]*10000+line[j]];
+        preLine = line[path[j-1]*10000+path[j]];
         preTransfer = path[j-1];
       }
     }
