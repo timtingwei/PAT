@@ -11,15 +11,17 @@ struct TNode {
   int Data;
 };
 
+/*
 BST CreateTree() {
   BST T;
   T = (BST)malloc(sizeof(struct TNode));
   T->Left = T->Right = NULL;
   return T;
 }
+*/
 
 BST Insert(BST T, int X) {
-  if (!T) {
+  if (T == NULL) {
     T = (BST)malloc(sizeof(struct TNode));
     T->Left = T->Right = NULL;
     T->Data = X;
@@ -34,13 +36,14 @@ BST Insert(BST T, int X) {
 }
 
 BST BuildTree(int n) {
-  int i, X; BST T;
-  T = CreateTree();
-  scanf("%d", &X);
-  T->Data = X;        /* 只能这样先存入第一个结点吗? */
-  for (i = 1; i < n; i++) {
+  /* 不存入第一个结点, 可以先将T定义成NULL, 在Insert中初始化*/
+  int i, X; BST T = NULL;
+  /* T = CreateTree(); */
+  /* scanf("%d", &X); */
+  /* T->Data = X;*/        /* 只能这样先存入第一个结点吗? */
+  for (i = 0; i < n; i++) {
     scanf("%d", &X);
-    Insert(T, X);
+    T = Insert(T, X);
   }
   return T;
 }
