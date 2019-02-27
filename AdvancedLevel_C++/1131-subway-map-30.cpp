@@ -53,14 +53,26 @@ void Refresh(vector<int> line, vector<int> node) {
   }
 }
 
+void PrintV(vector<int> v) {
+  int i;
+  for (i = 0; i < v.size(); i++) {
+    printf("%d ", v[i]);
+  }
+  printf("\n");
+}
+
 int visited[MaxSize] = {0};
 void dfs(int V, int D, int node, int transfer, int line,
   vector<int> now_line_v, vector<int> now_node_v) {
   int W, i; vector<int> tmp_line_v, tmp_node_v;
   visited[V] = 1;
+  printf("V = %d, D = %d, node = %d, transfer = %d, line = %d\n",
+         V, D, node, transfer, line);
+  PrintV(now_line_v);
+  PrintV(now_node_v);
   if (V == D) {
     tmp_node_v = Copy(now_node_v);
-    tmp_node_v.push_back(D);
+    tmp_node_v.push_back(D);     /* 压入终点结点 */
     if (node < min_node) {
       min_node = node;
       Refresh(now_line_v, tmp_node_v);
@@ -73,7 +85,7 @@ void dfs(int V, int D, int node, int transfer, int line,
   if (node > min_node || (node == min_node && transfer > min_transfer)) {
     return;
   }
-  
+
   for (i = 0; i < G[V].size(); i++) {
     W = G[V][i];
     if (!visited[W]) {
@@ -81,8 +93,8 @@ void dfs(int V, int D, int node, int transfer, int line,
         dfs(W, D, node+1, transfer, line, now_line_v, now_node_v);
       } else {
         tmp_line_v = Copy(now_line_v); tmp_node_v = Copy(now_node_v);
-        tmp_line_v.push_back(mp_line[W]);
-        tmp_node_v.push_back(W);
+        tmp_line_v.push_back(mp_line[W]);   /* 把下条路线压入 */
+        tmp_node_v.push_back(V);            /* 把当前结点压入!! */
         dfs(W, D, node+1, transfer+1, mp_line[W], tmp_line_v, tmp_node_v);
       }
       visited[W] = 0;
@@ -96,6 +108,13 @@ void PrintPath(vector<int> line, vector<int> node, int min_node) {
   for (i = 0; i < line.size(); i++) {
     printf("Take Line#%d from %04d to %04d.\n", line[i], node[i], node[i+1]);
   }
+  /*
+  printf("node.size() = %lu \n", node.size());
+  for (i = 0; i < node.size(); i++) {
+    printf("%d ", node[i]);
+  }
+  printf("\n");
+  */
 }
 
 void FindPath(int S, int D) {
