@@ -1,8 +1,20 @@
 /* Copyright [2019] <mituh> */
 /* 1118-birds-in-forest-25.cpp */
 /* 并查集 */
-
+/*
+5
+3 10 1 2
+2 3 4
+4 1 5 7 8
+3 9 6 4
+0
+2
+10 5
+3 7
+*/
 #include <cstdio>
+#include <vector>
+using namespace std;
 #define MaxSize 10050
 #define INFI 99999
 int T[MaxSize];    /* int T[MaxSize] = {INFI}为什么不行? */
@@ -47,7 +59,9 @@ int main() {
   scanf("%d", &n);
   Init();
   for (i = 0; i < n; i++) {
-    scanf("%d%d", &k, &bird);
+    scanf("%d", &k);
+    if (k == 0) continue;
+    scanf("%d", &bird);
     if (!have[bird]) { Cnt++; have[bird] = 1; }
     Root = Find(bird);
     for (j = 1; j < k; j++) {
