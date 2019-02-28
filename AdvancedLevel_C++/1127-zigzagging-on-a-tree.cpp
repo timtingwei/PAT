@@ -4,7 +4,8 @@
 
 #include <cstdio>
 #include <cmath>
-#define MaxSize 50
+/* #define MaxSize 50 */
+#define MaxSize 100000     /* 如果是斜树的话, k=30, 2^30大小 */
 int in[MaxSize], post[MaxSize], T[MaxSize];
 
 void order(int index, int inL, int postL, int n) {
