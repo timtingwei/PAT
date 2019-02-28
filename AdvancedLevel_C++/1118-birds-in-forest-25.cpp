@@ -12,21 +12,31 @@
 10 5
 3 7
 */
+
+/* 坑点: */
+/* 只有一个鸟情况: 属于一个独自的群体*/
+/* 没有鸟的情况: 这题中不存在这样的情况 */
+/* cnt代表鸟的个数, T的cnt下标也可能是根结点 */
+/* int T[MaxSize] = {INFY}, 这种初始化只适用于0, 其他要用fill或者循环 */
 #include <cstdio>
 #include <vector>
 using namespace std;
 #define MaxSize 10050
 #define INFI 99999
 int T[MaxSize];    /* int T[MaxSize] = {INFI}为什么不行? */
-int have[MaxSize];
+int have[MaxSize] = {0};
+
 
 void Init() {
   int i;
+  /*
   for (i = 0; i < MaxSize; i++) {
-    T[i] = INFI;    /* 为什么需要这样? */
-    have[i] = 0;
+    T[i] = INFI;
   }
+  */
+  fill(T, T+MaxSize, INFI);
 }
+
 
 int GetRoot(int c) {
   while (T[c] >= 0) c = T[c];
@@ -60,17 +70,17 @@ int main() {
   Init();
   for (i = 0; i < n; i++) {
     scanf("%d", &k);
-    if (k == 0) continue;
-    scanf("%d", &bird);
-    if (!have[bird]) { Cnt++; have[bird] = 1; }
-    Root = Find(bird);
-    for (j = 1; j < k; j++) {
+    for (j = 0; j < k; j++) {
       scanf("%d", &bird);
+      if (j != 0) {
+        Root = Union(Root, Find(bird));
+      } else {
+        Root = Find(bird);
+      }
       if (!have[bird]) { Cnt++; have[bird] = 1; }
-      Root = Union(Root, Find(bird));
     }
   }
-  for (i = 0; i < Cnt; i++) {
+  for (i = 0; i <= Cnt; i++) {   /* i==cnt 是可能的! */
     if (T[i] < 0) tree_Cnt++;
   }
   printf("%d %d\n", tree_Cnt, Cnt);
@@ -86,3 +96,4 @@ int main() {
   }
   return 0;
 }
+
