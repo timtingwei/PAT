@@ -40,7 +40,7 @@ int Find(int c) {
 }
 
 int Union(int R1, int R2) {
-  if (R1 == R2) return R1;     /* 在归并代码中, 别要忘记两个根相同的情况!! */
+  if (R1 == R2) return R1;  /* bug0: 在归并代码中, 别要忘记两个根相同的情况!! */
   int Root;
   if (R1 < R2) {   /* R1的结点编号更小 */
     T[R1].root += T[R2].root; T[R2].root = R1;  /* 规模, 挂 */
@@ -82,16 +82,18 @@ int main() {
     T[Root].e += e; T[Root].a += a;
   }
 
-  printf("finish read\n");
-
   for (i = 0; i < MaxSize; i++) {
-    if (T[i].root < 0) { v.push_back(T[i]); }
+    if (T[i].root < 0) {
+      /* bug1: 按平均值排序， 先要算出平均值 */
+      T[i].e /= (-T[i].root); T[i].a /= (-T[i].root);
+      v.push_back(T[i]);
+    }
   }
   sort(v.begin(), v.end(), cmp);
-  printf("%lu", v.size());
+  printf("%lu\n", v.size());
   for (i = 0; i < v.size(); i++) {
     printf("%04d %d %.3lf %.3lf\n",
-            v[i].ID, -v[i].root, v[i].e/(-v[i].root), v[i].a/(-v[i].root));
+            v[i].ID, -v[i].root, v[i].e, v[i].a);
   }
   return 0;
 }
