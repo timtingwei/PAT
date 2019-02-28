@@ -1,7 +1,7 @@
 /* Copyright [2019] <mituh> */
 /* 1147-heaps.cpp */
 /* 堆, 树的遍历 */
-
+/* case2, 4, WA: */
 #include <cstdio>
 #include <vector>
 using namespace std;
@@ -14,46 +14,24 @@ void ReadData(int n) {
   for (i = 1; i <= n; i++) { scanf("%d", &T[i]);}
 }
 
-int IsMaxHeap(int Root) {
-  int Left, Right;
-  Left = Root*2; Right = Root*2+1;
-  if (T[Left] != -1 && T[Right] != 1) {
-    if (T[Root] >= T[Left] && T[Root] >= T[Right]) {
-      return IsMaxHeap(Left) && IsMaxHeap(Right);
-    } else { return 0; }
-  } else if (T[Left] != -1 || T[Right] != -1) {
-    if (T[Left] != -1) {
-      if (T[Root] >= T[Left]) {
-        return IsMaxHeap(Left);
-      } else { return 0; }
-    } else {
-      if (T[Root] >= T[Right]) {
-        return IsMaxHeap(Right);
-      } else { return 0; }
+int IsMaxHeap(int n) {
+  int i, ans = 1;
+  for (i = n; i > 1; i--) {
+    if (T[i] > T[i/2]) {
+      ans = 0; break;
     }
   }
-  return 1;
+  return ans;
 }
 
-int IsMinHeap(int Root) {
-  int Left, Right;
-  Left = Root*2; Right = Root*2+1;
-  if (T[Left] != -1 && T[Right] != 1) {
-    if (T[Root] <= T[Left] && T[Root] <= T[Right]) {
-      return IsMinHeap(Left) && IsMinHeap(Right);
-    } else { return 0; }
-  } else if (T[Left] != -1 || T[Right] != -1) {
-    if (T[Left] != -1) {
-      if (T[Root] <= T[Left]) {
-        return IsMinHeap(Left);
-      } else {return 0;}
-    } else {
-      if (T[Root] <= T[Right]) {
-        return IsMinHeap(Right);
-      } else { return 0;}
+int IsMinHeap(int n) {
+  int i, ans = 1;
+  for (i = n; i > 1; i--) {
+    if (T[i] < T[i/2]) {
+      ans = 0; break;
     }
   }
-  return 1;
+  return ans;
 }
 
 void PostOrderTraversal(int Root) {
@@ -69,9 +47,9 @@ int main() {
   for (i = 0; i < m; i++) {
     fill(T, T+MaxSize, -1);
     ReadData(n);
-    if (IsMaxHeap(1)) {
+    if (IsMaxHeap(n)) {
       printf("Max Heap\n");
-    } else if (IsMinHeap(1)) {
+    } else if (IsMinHeap(n)) {
       printf("Min Heap\n");
     } else {
       printf("Not Heap\n");
