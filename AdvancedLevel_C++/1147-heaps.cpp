@@ -1,7 +1,8 @@
 /* Copyright [2019] <mituh> */
 /* 1147-heaps.cpp */
 /* 堆, 树的遍历 */
-/* case2, 4, WA: */
+/* case2, 4, WA: 不明白 */
+
 #include <cstdio>
 #include <vector>
 using namespace std;
@@ -11,6 +12,7 @@ int T[MaxSize];
 
 void ReadData(int n) {
   int i;
+  for (i = 0; i < MaxSize; i++) T[i] = -1;
   for (i = 1; i <= n; i++) { scanf("%d", &T[i]);}
 }
 
@@ -45,7 +47,6 @@ int main() {
   int m, n, i, j;
   scanf("%d%d", &m, &n);
   for (i = 0; i < m; i++) {
-    fill(T, T+MaxSize, -1);
     ReadData(n);
     if (IsMaxHeap(n)) {
       printf("Max Heap\n");
