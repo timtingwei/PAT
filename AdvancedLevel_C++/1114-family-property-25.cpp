@@ -40,6 +40,7 @@ int Find(int c) {
 }
 
 int Union(int R1, int R2) {
+  if (R1 == R2) return R1;     /* 在归并代码中, 别要忘记两个根相同的情况!! */
   int Root;
   if (R1 < R2) {   /* R1的结点编号更小 */
     T[R1].root += T[R2].root; T[R2].root = R1;  /* 规模, 挂 */
@@ -67,7 +68,7 @@ int main() {
   for (i = 0; i < n; i++) {
     int ID, p1, p2, k, c, Root;
     double e, a;
-    scanf("%d%d%d", &ID, &p1, &p2);
+    scanf("%d %d %d", &ID, &p1, &p2);
     Root = Find(ID);
     if (p1 != -1) Root = Union(Root, Find(p1));
     if (p2 != -1) Root = Union(Root, Find(p2));
@@ -77,8 +78,11 @@ int main() {
       Root = Union(Root, Find(c));
     }
     scanf("%lf %lf", &e, &a);
+    T[Root].ID = Root;
     T[Root].e += e; T[Root].a += a;
   }
+
+  printf("finish read\n");
 
   for (i = 0; i < MaxSize; i++) {
     if (T[i].root < 0) { v.push_back(T[i]); }
