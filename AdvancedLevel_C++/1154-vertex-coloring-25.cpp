@@ -1,11 +1,11 @@
 /* Copyright [2019] <mituh> */
 /* 1154-vertex-coloring-25.cpp */
-/* 堆, 树的遍历 */
+/* bfs宽度遍历 */
 
 #include <cstdio>
 #include <vector>
 using namespace std;
-#define MaxSize 10000
+#define MaxSize 100000
 #define INF 99999
 
 // vector<vector<int> > G(MaxSize);
@@ -45,9 +45,8 @@ int main() {
     fill(color, color+MaxSize, 0);
     ok = 1; cnt = 0;
     for (j = 0; j < n; j++) {
-      scanf("%d", &c);
-      color[j] = c;
-      if (!have[c]) {
+      scanf("%d", &color[j]);
+      if (!have[color[j]]) {
         cnt++;
         have[color[j]] = 1;
       }
