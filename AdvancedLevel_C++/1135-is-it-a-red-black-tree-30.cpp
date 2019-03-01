@@ -28,7 +28,7 @@ int GetBiggerCnt(int Root) {
   left_cnt = GetBiggerCnt(Root*2);
   right_cnt = GetBiggerCnt(Root*2+1);
   c = (left_cnt >= right_cnt) ? left_cnt : right_cnt;
-  if (color[Root] == 1) { c++; }   /* 黑结点加本身 */
+  if (color[Root] == 0) c++;   /* 黑结点加本身!!, 不是红结点 */
   Cnt[Root] = c;
   return c;
 }
@@ -42,31 +42,19 @@ int Judge() {
     if (T[i] != -1) {
       if (color[i] == 1) {   /* 红色结点左右孩子存在红 */
         if (T[i*2] != -1 && color[i*2] == 1) {
-          printf("red node's left child is red\n");
           return 0;
         }
         if (T[i*2+1] != -1 && color[i*2+1] == 1) {
-          printf("red node's right child is red\n");
           return 0;
         }
       }
       if ((T[i*2] != -1 && T[i*2+1] != -1) && (Cnt[i*2] != Cnt[i*2+1])) {
         /* 左右孩子存在, 但下面的黑色结点数不同 */
-        printf("cnt different\n");
         return 0;
       }
     }
   }
   return 1;
-}
-
-/* 测试树 */
-void preOrder(int Root) {
-  if (T[Root] == -1) return;
-  printf("%d ", T[Root]);
-  printf("%d ", color[Root]);
-  preOrder(Root*2);
-  preOrder(Root*2+1);
 }
 
 void BuildTree(int n) {
@@ -89,8 +77,6 @@ int main() {
   for (i = 0; i < n; i++) {
     scanf("%d", &m);
     BuildTree(m);
-    preOrder(1);
-    printf("\n");
     if (Judge()) {
       printf("Yes\n");
     } else {
