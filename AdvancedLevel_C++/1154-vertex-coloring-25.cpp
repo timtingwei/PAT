@@ -1,7 +1,9 @@
 /* Copyright [2019] <mituh> */
 /* 1154-vertex-coloring-25.cpp */
 /* bfs宽度遍历 */
-
+/*
+ 1, 用宽度遍历比dfs更好; 2, color在int范围之内, 只能用map开; 3, bfs是队列
+*/
 #include <cstdio>
 #include <vector>
 #include <unordered_map>
@@ -12,8 +14,8 @@ using namespace std;
 // vector<vector<int> > G(MaxSize);
 vector<int> G[MaxSize];
 
-int ok, cnt, color[MaxSize], have[MaxSize], visited[MaxSize] = {0};
-
+int ok, cnt, color[MaxSize], visited[MaxSize] = {0};
+unordered_map<int, int> mp_have;
 /*
 void dfs(int V) {
   int i, W;
@@ -69,14 +71,15 @@ int main() {
     // fill(visited, visited+MaxSize, 0);
     // fill(color, color+MaxSize, 0);
     for (j = 0; j < MaxSize; j++) {
-      have[j] = 0; visited[j] = 0; color[j] = 0;
+      visited[j] = 0; color[j] = 0;
     }
+    mp_have.clear();
     ok = 1; cnt = 0;
     for (j = 0; j < n; j++) {
       scanf("%d", &color[j]);
-      if (!have[color[j]]) {
+      if (!mp_have[color[j]]) {
         cnt++;
-        have[color[j]] = 1;
+        mp_have[color[j]] = 1;
       }
     }
     // dfs(0);
