@@ -1,7 +1,7 @@
 /* Copyright [2019] <mituh> */
 /* 1147-heaps.cpp */
 /* 堆, 树的遍历 */
-/* case2, 4, WA: 不明白 */
+/* case2, 4, WA:  堆, 完全二叉树用结点下标 <= n来判断是不是空结点 */
 
 #include <cstdio>
 #include <vector>
@@ -9,27 +9,24 @@ using namespace std;
 #define MaxSize 10050   /* 防止最后一排溢出 */
 vector<int> v;
 int T[MaxSize];
+int n;  /* 完全二叉树用n与i比较 判断空结点 */
 
-void ReadData(int n) {
-  int i;
-  for (i = 0; i < MaxSize; i++) T[i] = -1;
-  for (i = 1; i <= n; i++) { scanf("%d", &T[i]);}
-}
-
-int IsMaxHeap(int n) {
-  int i, ans = 1;
-  for (i = n; i > 1; i--) {
-    if (T[i] > T[i/2]) {
+int IsMaxHeap() {
+  int i, left, right, ans = 1;
+  for (i = 1; i <= n; i++) {
+    left = i*2; right = i*2+1;
+    if ((left <= n && T[left] > T[i]) || (right <= n && T[right] > T[i])) {
       ans = 0; break;
     }
   }
   return ans;
 }
 
-int IsMinHeap(int n) {
-  int i, ans = 1;
-  for (i = n; i > 1; i--) {
-    if (T[i] < T[i/2]) {
+int IsMinHeap() {
+  int i, left, right, ans = 1;
+  for (i = 1; i <= n; i++) {
+    left = i*2; right = i*2+1;
+    if ((left <= n && T[left] < T[i]) || (right <= n && T[right] < T[i])) {
       ans = 0; break;
     }
   }
@@ -37,28 +34,28 @@ int IsMinHeap(int n) {
 }
 
 void PostOrderTraversal(int Root) {
-  if (T[Root] == -1) return;
+  if (Root > n) return;
   PostOrderTraversal(Root*2);
   PostOrderTraversal(Root*2+1);
   v.push_back(T[Root]);
 }
 
 int main() {
-  int m, n, i, j;
+  int m, i, j;
   scanf("%d%d", &m, &n);
   for (i = 0; i < m; i++) {
-    ReadData(n);
-    if (IsMaxHeap(n)) {
-      printf("Max Heap\n");
-    } else if (IsMinHeap(n)) {
+    for (j = 1; j <= n; j++) { scanf("%d", &T[j]);}
+    if (IsMinHeap() && !IsMaxHeap()) {
       printf("Min Heap\n");
+    } else if (IsMaxHeap() && !IsMinHeap()) {
+      printf("Max Heap\n");
     } else {
       printf("Not Heap\n");
     }
     v.clear();
     PostOrderTraversal(1);
-    int flag;
-    for (j = 0, flag = 0; j < v.size(); j++) {
+    int flag = 0;
+    for (j = 0; j < v.size(); j++) {
       if (flag) {
         printf(" ");
       } else {
