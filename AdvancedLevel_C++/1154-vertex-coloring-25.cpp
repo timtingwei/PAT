@@ -7,8 +7,9 @@
 #include <cstdio>
 #include <vector>
 #include <unordered_map>
+#include <queue>
 using namespace std;
-#define MaxSize 100000
+#define MaxSize 10000
 #define INF 99999
 
 // vector<vector<int> > G(MaxSize);
@@ -33,6 +34,9 @@ void dfs(int V) {
   }
 }
 */
+
+/*
+// 栈版
 vector<int> v;
 void bfs(int S) {
   int i, V, W;
@@ -54,6 +58,30 @@ void bfs(int S) {
     }
   }
 }
+*/
+
+/*
+void bfs(int S) {
+  int i, V, W; queue<int> q;   // q暂时不能初始化
+  fill(visited, visited+MaxSize, 0);
+  q.push(S);
+  while (!q.empty()) {
+    V = q.front(); q.pop();
+    visited[V] = 1;
+    for (i = 0; i < G[V].size(); i++) {
+      W = G[V][i];
+      if (!visited[W]) {
+        if (color[V] != color[W]) {
+          q.push(W);
+        } else {
+          ok = 0; return;
+        }
+      }
+    }
+  }
+}
+*/
+
 int main() {
 #ifdef LOCAL
   freopen("in.txt", "r", stdin);
