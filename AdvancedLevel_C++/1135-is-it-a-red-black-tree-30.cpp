@@ -20,6 +20,7 @@ void Insert(int Root, int X, int c) {
   }
 }
 
+/*
 int GetBiggerCnt(int Root) {
   if (T[Root] == -1) {
     return 0;
@@ -28,12 +29,30 @@ int GetBiggerCnt(int Root) {
   left_cnt = GetBiggerCnt(Root*2);
   right_cnt = GetBiggerCnt(Root*2+1);
   c = (left_cnt >= right_cnt) ? left_cnt : right_cnt;
-  if (color[Root] == 0) c++;   /* 黑结点加本身!!, 不是红结点 */
+  if (color[Root] == 0) c++;
   Cnt[Root] = c;
   return c;
 }
+*/
+
+int GetBiggerCnt(int root) {
+  if (T[root] == -1) return 0;
+  int l = GetBiggerCnt(root*2);
+  int r = GetBiggerCnt(root*2+1);
+  // 黑结点加本身!!, 不是红结点
+  return (color[root] == 0) ? max(l, r) + 1 : max(l, r);
+}
+
+int judge2(int root) {
+  if (T[root] == -1) return 1;
+  int l = GetBiggerCnt(root*2);
+  int r = GetBiggerCnt(root*2+1);
+  if (l != r) return 0;
+  return judge2(root*2) && judge2(root*2+1);
+}
 
 int Judge() {
+  if (T[1] == -1) return 0;  /* 空树 */
   if (color[1] == 1) return 0;   /* 根结点为红 */
   int i;
   fill(Cnt, Cnt+MaxSize, 0);
@@ -48,10 +67,13 @@ int Judge() {
           return 0;
         }
       }
+      /*
       if ((T[i*2] != -1 && T[i*2+1] != -1) && (Cnt[i*2] != Cnt[i*2+1])) {
-        /* 左右孩子存在, 但下面的黑色结点数不同 */
+        // 左右孩子存在, 但下面的黑色结点数不同
         return 0;
       }
+      */
+      if (!judge2(i)) return 0;
     }
   }
   return 1;
